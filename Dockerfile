@@ -8,12 +8,8 @@ RUN set -ex; \
   useradd --home-dir /home/steam --create-home steam; \
   mkdir -p /steamcmd; \
   mkdir -p /astroneer; \
-  mkdir -p /backup;
-
-RUN set -ex; \
-  chown -R steam:root /steamcmd; \
-  chown -R steam:root /astroneer; \
-  chown -R steam:root /backup;
+  mkdir -p /backup; \
+  mkdir -p /wine
 
 RUN set -ex; \
   dpkg --add-architecture i386; \
@@ -80,7 +76,17 @@ RUN set -ex; \
 
 RUN chmod +x /usr/bin/entrypoint.sh
 
+# Adjust permissions to make sure the steam user can execute stuff
+RUN set -ex; \
+  chown -R steam:root /steamcmd; \
+  chown -R steam:root /astroneer; \
+  chown -R steam:root /backup; \
+  chown -R steam:root /wine; \
+  chown -R steam:root /tmp
+
 WORKDIR /steamcmd
+
+USER steam
 
 ENTRYPOINT ["/usr/bin/entrypoint.sh"]
 
