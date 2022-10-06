@@ -1,0 +1,23 @@
+version: '3.1'
+
+services:
+  server:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    environment:
+      - "SERVER_PORT=8777"
+      - "SERVER_PUBLIC_IP="
+    ports:
+      - 8777:8777
+    volumes:
+     - astroneer:/astroneer
+     - steamcmd:/steamcmd
+     - wine:/wine
+     - backup:/backup
+
+volumes:
+  astroneer:
+  steamcmd:
+  wine:
+  backup:
