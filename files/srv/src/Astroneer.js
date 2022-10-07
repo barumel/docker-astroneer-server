@@ -80,6 +80,9 @@ function Astroneer() {
     const engine = fs.readFileSync('/astroneer/Astro/Saved/Config/WindowsServer/Engine.ini', 'utf8');
     const astro = ini.parse(fs.readFileSync('/astroneer/Astro/Saved/Config/WindowsServer/AstroServerSettings.ini', 'utf8'));
 
+    // ini seems to remove entries from file (bad formatted??)
+    // Append stuff instead replace. does not work properly atm. as it add stuff multiple times (on every startup)
+    // TODO: Make sure old entries are removed before appending shit...
     const e = {};
     set(e, 'URL.Port', get(process.env, 'SEVER_PORT', '8777'));
     set(e, 'SystemSettings', { 'net.AllowEncryption': 'False' });
