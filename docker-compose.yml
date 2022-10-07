@@ -6,11 +6,10 @@ services:
       context: ./
       dockerfile: Dockerfile
     environment:
-      - "SERVER_PORT=8777"
-      - "SERVER_PUBLIC_IP="
-      - "SERVER_NAME=SAY_MY_NAME"
-      - "SERVER_PASSWORD=MySuperSecurePassword"
-      - "OWNER_NAME=Dr. Evil"
+      - "SERVER_PORT=${SERVER_PORT}"
+      - "SERVER_NAME=${SERVER_NAME}"
+      - "SERVER_PASSWORD=${SERVER_PASSWORD}"
+      - "OWNER_NAME=${OWNER_NAME}"
     ports:
       - 8777:8777/tcp
       - 8777:8777/udp
