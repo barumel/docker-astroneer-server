@@ -83,6 +83,10 @@ function Astroneer() {
     const e = {};
     set(e, 'URL.Port', get(process.env, 'SEVER_PORT', '8777'));
     set(e, 'SystemSettings', { 'net.AllowEncryption': 'False' });
+    set(e, '/Script/OnlineSubsystemUtils.IpNetDriver', {
+      MaxClientRate: 1048576,
+      MaxInternetClientRate: 1048576
+    });
 
     fs.writeFileSync('/astroneer/Astro/Saved/Config/WindowsServer/Engine.ini', `${engine}\n${ini.encode(e)}`);
 

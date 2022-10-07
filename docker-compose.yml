@@ -8,8 +8,12 @@ services:
     environment:
       - "SERVER_PORT=8777"
       - "SERVER_PUBLIC_IP="
+      - "SERVER_NAME=SAY_MY_NAME"
+      - "SERVER_PASSWORD=MySuperSecurePassword"
+      - "OWNER_NAME=Dr. Evil"
     ports:
-      - 8777:8777
+      - 8777:8777/tcp
+      - 8777:8777/udp
     volumes:
      - astroneer:/astroneer
      - steamcmd:/steamcmd
