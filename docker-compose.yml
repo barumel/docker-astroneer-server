@@ -10,6 +10,7 @@ services:
       - "SERVER_NAME=${SERVER_NAME}"
       - "SERVER_PASSWORD=${SERVER_PASSWORD}"
       - "OWNER_NAME=${OWNER_NAME}"
+      - "SERVER_AUTO_SAVE_INTERVALL=${SERVER_AUTO_SAVE_INTERVAL}"
     ports:
       - 8777:8777/tcp
       - 8777:8777/udp

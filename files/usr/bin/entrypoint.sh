@@ -12,12 +12,14 @@ echo "REMOVE XVFB LOCK FILE IF IT EXISTS"
 rm -rf /tmp/.X99-lock
 echo "DONE..."
 
+echo "START BACKUP"
+node /srv/backup.js &
+
 # Start the servier
 echo "RUN THE SERVER"
 node /srv/server.js
 
-echo "START BACKUP"
-node /srv/backup.js
+
 
 
 

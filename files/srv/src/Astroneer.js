@@ -98,6 +98,7 @@ function Astroneer() {
     set(astro, '/Script/Astro.AstroServerSettings.PublicIP', get(process.env, 'PUBLIC_IP', publicIp));
     set(astro, '/Script/Astro.AstroServerSettings.OwnerName', get(process.env, 'OWNER_NAME', 'Hans Wurst'));
     set(astro, '/Script/Astro.AstroServerSettings.ServerPassword', get(process.env, 'SERVER_PASSWORD', 'Well... that was clear'));
+    set(astro, '/Script/Astro.AstroServerSettings.AutoSaveGameInterval', get(process.env, 'SERVER_AUTO_SAVE_INTERVAL', 600));
 
     fs.writeFileSync('/astroneer/Astro/Saved/Config/WindowsServer/AstroServerSettings.ini', ini.encode(astro));
   }
