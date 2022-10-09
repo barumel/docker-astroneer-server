@@ -16,6 +16,9 @@ echo "DONE..."
 echo "RUN THE SERVER"
 node /srv/server.js
 
+echo "START BACKUP"
+node /srv/backup.js
+
 
 
 echo "ENTRYPOINT SCRIPT DONE..."
