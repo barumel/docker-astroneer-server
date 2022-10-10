@@ -24,7 +24,7 @@ function ensureFiles() {
 
       // Files may change multiple times. If both changed, wait another 20 second to make sure all changes are applied
       if (!fired && (astroIni && engineIni)) {
-        console.log(clc.green('CONFIG FILES CREATED. WAIT FOR ANOTHER 40 SECONDS TO MAKE SURE ALL CHANGES ARE APPLIED...'));
+        console.log(clc.green('CONFIG FILES CREATED. WAIT FOR ANOTHER 40 SECONDS TO MAKE SURE ALL CHANGES WERE APPLIED...'));
         fired = true;
         setTimeout(() => {
           ac.abort();
@@ -77,22 +77,22 @@ function Astroneer() {
     return;
   }
 
+  // TODO: Add ability to pass ini setting as env var
   async function updateConfig() {
-    const engine = fs.readFileSync('/astroneer/Astro/Saved/Config/WindowsServer/Engine.ini', 'utf8');
-    const astro = ini.parse(fs.readFileSync('/astroneer/Astro/Saved/Config/WindowsServer/AstroServerSettings.ini', 'utf8'));
+    const engine = ini.decode(fs.readFileSync('/astroneer/Astro/Saved/Config/WindowsServer/Engine.ini', 'utf8'));
+    const astro = ini.decode(fs.readFileSync('/astroneer/Astro/Saved/Config/WindowsServer/AstroServerSettings.ini', 'utf8'));
 
     // ini seems to remove entries from file (bad formatted??)
     // Append stuff instead replace. does not work properly atm. as it add stuff multiple times (on every startup)
     // TODO: Make sure old entries are removed before appending shit...
-    const e = {};
-    set(e, 'URL.Port', get(process.env, 'SEVER_PORT', '8777'));
-    set(e, 'SystemSettings', { 'net.AllowEncryption': 'False' });
-    set(e, '/Script/OnlineSubsystemUtils.IpNetDriver', {
+    set(engine, 'URL.Port', get(process.env, 'SEVER_PORT', '8777'));
+    set(engine, 'SystemSettings', { 'net.AllowEncryption': 'False' });
+    set(engine, '/Script/OnlineSubsystemUtils.IpNetDriver', {
       MaxClientRate: 1048576,
       MaxInternetClientRate: 1048576
     });
 
-    fs.writeFileSync('/astroneer/Astro/Saved/Config/WindowsServer/Engine.ini', `${engine}\n${ini.encode(e)}`);
+    fs.writeFileSync('/astroneer/Astro/Saved/Config/WindowsServer/Engine.ini', ini.encode(engine));
 
     const publicIp = await getPublicIp();
     set(astro, '/Script/Astro.AstroServerSettings.ServerName', get(process.env, 'SERVER_NAME', 'Ooops... i did forget to set a server name'));
@@ -152,7 +152,7 @@ function Astroneer() {
   }
 
   function scheduleRestart(ms) {
-    console.log(`SCHEDULE NEXT RESTART FOR ${moment().add(ms, 'milliseconds').format()}`);
+    console.log(`SCHEDULE NEXT RESTART ON ${moment().add(ms, 'milliseconds').format()}`);
 
     setTimeout(async () => {
       const backupTarget = `/backup/restart/${moment().format()}`;

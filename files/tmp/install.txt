@@ -1,5 +1,5 @@
 @sSteamCmdForcePlatformType windows
-login anonymous
 force_install_dir /astroneer
+login anonymous
 app_update 728470 validate
 quit
