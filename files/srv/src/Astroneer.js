@@ -168,7 +168,7 @@ function Astroneer() {
   }
 
   function autoRestart() {
-    const restartTime = get(process.env, 'SERVER_AUTO_RESTART_TIME', '06:00');
+    const restartTime = get(process.env, 'SERVER_AUTO_RESTART_TIME', '05:00');
     const [hour, minute] = restartTime.split(':');
 
     const now = moment();
