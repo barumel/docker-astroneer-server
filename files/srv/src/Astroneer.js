@@ -4,6 +4,7 @@ const fs = require('fs-extra');
 const ini = require('ini');
 const { get, set } = require('lodash');
 const axios = require('axios');
+const moment = require('moment');
 
 const ac = new AbortController();
 const { signal } = ac;
@@ -137,10 +138,55 @@ function Astroneer() {
     });
   }
 
+  async function stop() {
+    return new Promise((resolve) => {
+      console.log('STOPPING SERVER...');
+
+      process.kill(-child.pid, 'SIGTERM');
+      process.kill(-child.pid, 'SIGKILL');
+
+      console.log('SERVER STOPPED');
+
+      setTimeout(resolve, 10000);
+    });
+  }
+
+  function scheduleRestart(ms) {
+    console.log(`SCHEDULE NEXT RESTART FOR ${moment().add(ms, 'milliseconds').format()}`);
+
+    setTimeout(async () => {
+      const backupTarget = `/backup/restart/${moment().format()}`;
+      fs.ensureDirSync(backupTarget);
+      fs.cpSync('/astroneer/Astro/Saved/SaveGames', backupTarget, { recursive: true });
+
+      await stop();
+
+      start();
+
+      scheduleRestart(86400 * 1000)
+    }, ms);
+  }
+
+  function autoRestart() {
+    const restartTime = get(process.env, 'SERVER_AUTO_RESTART_TIME', '06:00');
+    const [hour, minute] = restartTime.split(':');
+
+    const now = moment();
+    const next = moment().set({ hour, minute });
+
+    const diff = now.isAfter(next)
+      ? next.add(1, 'day').diff(now, 'milliseconds')
+      : next.diff(now, 'milliseconds');
+
+    scheduleRestart(diff);
+  }
+
   return Object.freeze({
     init,
     updateConfig,
-    start
+    start,
+    stop,
+    autoRestart
   });
 }
 
