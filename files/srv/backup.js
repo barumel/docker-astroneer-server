@@ -5,12 +5,16 @@ fs.ensureDirSync('/astroneer/Astro/Saved/SaveGames');
 
 function backup() {
   const date = moment().format();
-  const target = `/backup/${date}`;
-  console.log(`CREATE BACKUP ${target}`);
+  const dest = `/backup/${date}`;
+  console.log(`CREATE BACKUP ${dest}`);
 
-  fs.ensureDirSync(target);
+  fs.ensureDirSync(dest);
+  const options = {
+    preserveTimestamps: true,
+    recursive: true
+  };
 
-  fs.cp('/astroneer/Astro/Saved/SaveGames', target, (err) => {
+  fs.cp('/astroneer/Astro/Saved/SaveGames', dest, options, (err) => {
     if (err) {
       console.log('ERROR IN BACKUP SCRIPT: CANNOT COPY FILES', err);
     } else {
