@@ -3,12 +3,16 @@ const moment = require('moment');
 
 fs.ensureDirSync('/astroneer/Astro/Saved/SaveGames');
 
-fs.watch('/astroneer/Astro/Saved/SaveGames', (eventType, filename) => {
-  console.log('BACKUP TRIGGERED', eventType, filename);
+function backup() {
   const date = moment().format();
   const folder = `/backup/${date}`;
+  console.log(`CREATE BACKUP ${folder}`);
 
   fs.ensureDirSync(folder);
 
   fs.cpSync('/astroneer/Astro/Saved/SaveGames', folder, { recursive: true });
-});
+
+  setTimeout(backup, 600000);
+}
+
+backup();
