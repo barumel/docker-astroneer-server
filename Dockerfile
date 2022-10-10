@@ -2,6 +2,7 @@ FROM amd64/debian:bullseye
 
 ENV WINEPREFIX=/wine
 ENV WINEARCH=win64
+ENV DEBIAN_FRONTEND=noninteractive
 # ENV WINEDEBUG=+all
 
 RUN set -ex; \
@@ -26,7 +27,8 @@ RUN set -ex; \
     dnsmasq \
     winbind \
     curl \
-    gnupg2;
+    gnupg2; \
+    tzdata;
 
 RUN set -ex; \
   wget https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/Debian_10/Release.key; \
