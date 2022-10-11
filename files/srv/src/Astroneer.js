@@ -140,19 +140,19 @@ function Astroneer() {
 
   async function stop() {
     return new Promise((resolve) => {
-      console.log('STOPPING SERVER...');
+      console.log(clc.yellow('GOING TO STOP THE SERVER...'));
 
       process.kill(-child.pid, 'SIGTERM');
       process.kill(-child.pid, 'SIGKILL');
 
-      console.log('SERVER STOPPED');
+      console.log(clc.green('SERVER STOPPED...'));
 
       setTimeout(resolve, 10000);
     });
   }
 
   function scheduleRestart(ms) {
-    console.log(`SCHEDULE NEXT RESTART ON ${moment().add(ms, 'milliseconds').format()}`);
+    console.log(clc.blue(`SCHEDULE NEXT RESTART ON ${moment().add(ms, 'milliseconds').format()}`));
 
     setTimeout(async () => {
       const backupTarget = `/backup/restart/${moment().format()}`;
