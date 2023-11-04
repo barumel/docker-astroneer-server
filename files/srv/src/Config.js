@@ -1,7 +1,7 @@
 const clc = require('cli-color');
 const fs = require('fs-extra');
 const ini = require('ini');
-const { get, setWith } = require('lodash');
+const { get, setWith, isNil } = require('lodash');
 const axios = require('axios');
 
 function Config() {
@@ -75,6 +75,23 @@ function Config() {
   }
 
   /**
+   * Get a single var from env.
+   * Return the defaultReturn if var is not set or an empty string
+   *
+   * @param   {String}  name           Var name
+   * @param   {String}  defaultReturn  Default return if nil or empty
+   *
+   * @return  {String}  value  Env var value
+   */
+  function getEnvVar(name, defaultReturn) {
+    const value = get(process.env, name);
+
+    return isNil(value) || get(value, 'length', 0) === 0
+      ? defaultReturn
+      : value;
+  }
+
+  /**
    * Init the config.
    * Wait until all necessary config files were created by astro server
    *
@@ -85,6 +102,11 @@ function Config() {
     await ensureConfigFiles();
   }
 
+  /**
+   * Update config files with values from evn
+   *
+   * @return  void
+   */
   async function update() {
     console.log(clc.green('GOING TO UPDATE THE SERVER CONFIGURATION BASED ON CURRENT ENV VARIABLES...'));
 
@@ -94,7 +116,7 @@ function Config() {
     // ini seems to remove entries from file (bad formatted??)
     // Append stuff instead replace. does not work properly atm. as it add stuff multiple times (on every startup)
     // TODO: Make sure old entries are removed before appending shit...
-    setWith(engine, 'URL.Port', get(process.env, 'SEVER_PORT', '8777'), Object);
+    setWith(engine, 'URL.Port', getEnvVar('SEVER_PORT', '8777'), Object);
     setWith(engine, 'SystemSettings', { 'net.AllowEncryption': 'False' }, Object);
     setWith(engine, '/Script/OnlineSubsystemUtils.IpNetDriver', {
       MaxClientRate: 1048576,
@@ -104,12 +126,13 @@ function Config() {
     fs.writeFileSync('/astroneer/Astro/Saved/Config/WindowsServer/Engine.ini', ini.encode(engine));
 
     const publicIp = await getPublicIp();
-    setWith(astro, '/Script/Astro.AstroServerSettings.ServerName', get(process.env, 'SERVER_NAME', 'Ooops... i did forget to set a server name'), Object);
-    setWith(astro, '/Script/Astro.AstroServerSettings.PublicIP', get(process.env, 'PUBLIC_IP', publicIp), Object);
-    setWith(astro, '/Script/Astro.AstroServerSettings.OwnerName', get(process.env, 'OWNER_NAME', 'Hans Wurst'));
-    setWith(astro, '/Script/Astro.AstroServerSettings.ServerPassword', get(process.env, 'SERVER_PASSWORD', 'Well... that was clear'), Object);
-    setWith(astro, '/Script/Astro.AstroServerSettings.AutoSaveGameInterval', get(process.env, 'SERVER_AUTO_SAVE_INTERVAL', 600), Object);
+    setWith(astro, '/Script/Astro.AstroServerSettings.ServerName', getEnvVar('SERVER_NAME', 'Ooops... i forgot to set a server name'), Object);
+    setWith(astro, '/Script/Astro.AstroServerSettings.PublicIP', getEnvVar('PUBLIC_IP', publicIp), Object);
+    setWith(astro, '/Script/Astro.AstroServerSettings.OwnerName', getEnvVar('OWNER_NAME', 'Hans Wurst'), Object);
+    setWith(astro, '/Script/Astro.AstroServerSettings.ServerPassword', getEnvVar('SERVER_PASSWORD', 'Well... that was clear'), Object);
+    setWith(astro, '/Script/Astro.AstroServerSettings.AutoSaveGameInterval', getEnvVar('SERVER_AUTO_SAVE_INTERVAL', 600), Object);
     setWith(astro, '/Script/Astro.AstroServerSettings.EnableAutoRestart', 'False', Object);
+    setWith(astro, '/Script/Astro.AstroServerSettings.ActiveSaveFileDescriptiveName', 'SERVER', Object);
 
     fs.writeFileSync('/astroneer/Astro/Saved/Config/WindowsServer/AstroServerSettings.ini', ini.encode(astro));
   }

@@ -2,10 +2,40 @@ const { spawn } = require('child_process');
 const clc = require('cli-color');
 
 const Config = require('./Config');
+const HealthCheck = require('./HealthCheck');
+const Backup = require('./Backup');
 
 function AstroneerServer() {
   const config = Config();
+  const healthCheck = HealthCheck();
+  const backup = Backup();
   let child = undefined;
+
+  /**
+   * Callback for healt check.
+   * Stop health check / backup, shut down the server, restore the backup and init / restart
+   *
+   * @return  void
+   */
+  async function onHealthCheckFailed() {
+    console.log(clc.red('--------------HEALT CHECK FAILED!--------------'));
+    console.log(clc.red('GOING TO RESTORE LATEST BACKUP...'));
+
+    const latest = backup.getLatest();
+    console.log(clc.blue(`LATEST BACKUP IS ${latest.timestamp}`));
+    console.log(clc.blue('GOING TO STOP HEALTH CHECK / BACKUP /SERVER...'));
+
+    healthCheck.stop();
+    backup.stop();
+
+    await stop();
+
+    backup.restore(latest.timestamp);
+    await init();
+    start();
+
+    console.log(clc.green('BACKUP SUCESSFULLY RESTORED!'));
+  }
 
   /**
    * Init the server
@@ -17,6 +47,8 @@ function AstroneerServer() {
    * @return  {Promise}
    */
   async function init() {
+    console.log(clc.blue('--------------INIT THE SERVER--------------'));
+
     if (!config.isInitialized()) {
       console.log(clc.yellow('NO CONFIG FILES FOUND. THIS MAY BE THE CASE IF THE SERVER RUNS THE FIRST TIME. WAIT...'));
 
@@ -30,6 +62,11 @@ function AstroneerServer() {
 
     // Update config
     await config.update();
+    // Init backup
+    await backup.init();
+    // Init health check
+    healthCheck.onFailed(onHealthCheckFailed);
+    await healthCheck.init();
   }
 
   /**
@@ -38,7 +75,7 @@ function AstroneerServer() {
    * @return  void
    */
   function start() {
-    console.log(clc.green('STARTING THE SERVER'));
+    console.log(clc.blue('--------------START THE SERVER--------------'));
 
     child = spawn('Xvfb :99 -screen 0 1024x768x16 -nolisten tcp & DISPLAY=:99 wine64 "/astroneer/Astro/Binaries/Win64/AstroServer-Win64-Shipping.exe"', {
       shell: true,
@@ -76,8 +113,13 @@ function AstroneerServer() {
    * @return void
    */
   async function stop() {
+    console.log(clc.blue('--------------STOP THE SERVER--------------'));
+
     return new Promise((resolve) => {
-      console.log(clc.yellow('GOING TO STOP THE SERVER...'));
+      console.log(clc.blue('GOING TO STOP THE SERVER...'));
+
+      healthCheck.stop();
+      backup.stop();
 
       process.kill(-child.pid, 'SIGTERM');
       process.kill(-child.pid, 'SIGKILL');

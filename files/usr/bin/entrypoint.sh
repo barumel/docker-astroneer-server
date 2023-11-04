@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# https://github.com/lloesche/valheim-server-docker/blob/main/valheim-updater#L140
 # This works around the `Unable to determine CPU Frequency. Try defining CPU_MHZ.` steamcmd issue (#184).
 verify_cpu_mhz() {
     local float_regex
