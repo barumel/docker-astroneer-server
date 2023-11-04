@@ -19,6 +19,12 @@ function HealthCheck() {
    */
   function init() {
     intervalID = setInterval(() => {
+      if (!fs.existsSync('/astroneer/Astro/Saved/SaveGames')) {
+        console.log(clc.yellow(`${moment().format()} UNABLE TO INIT HEALTH CHECK AS THERE IS NO SAVE GAME FILE!`));
+
+        return;
+      }
+
       const files = fs.readdirSync('/astroneer/Astro/Saved/SaveGames');
       const count = get(files, 'length', 0);
 

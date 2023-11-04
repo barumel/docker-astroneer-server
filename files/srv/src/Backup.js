@@ -67,7 +67,7 @@ function Backup() {
       const file = head(files);
 
       if (isNil(file)) {
-        console.log(clc.red(`UNABLE TO CREATE BACKUP ${timestamp} AS THERE IS NO SAVE GAME FILE!`));
+        console.log(clc.yellow(`UNABLE TO CREATE BACKUP ${timestamp} AS THERE IS NO SAVE GAME FILE!`));
         return;
       }
 
