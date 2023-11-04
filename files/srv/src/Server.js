@@ -1,5 +1,6 @@
 const { spawn } = require('child_process');
 const clc = require('cli-color');
+const fs = require('fs-extra');
 
 const Config = require('./Config');
 const HealthCheck = require('./HealthCheck');
@@ -59,6 +60,8 @@ function AstroneerServer() {
       console.log(clc.green('CONFIGFILES WERE CREATED. SHUT DOWN THE SERVER, UPDATE CONFIG AND THEN RESTART'));
       await stop();
     }
+    // Ensure save games dir as this is required for health check / backup
+    fs.ensureDirSync('/astroneer/Astro/Saved/SaveGames');
 
     // Update config
     await config.update();

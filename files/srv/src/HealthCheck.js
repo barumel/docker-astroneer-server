@@ -27,6 +27,8 @@ function HealthCheck() {
         return callback();
       }
     }, 20000);
+
+    console.log(clc.green('HEALTH CHECK IS NOW RUNNING'));
   }
 
   /**

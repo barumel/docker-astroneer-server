@@ -8,10 +8,10 @@ verify_cpu_mhz() {
     float_regex="^([0-9]+\\.?[0-9]*)\$"
     cpu_mhz=$(grep "^cpu MHz" /proc/cpuinfo | head -1 | cut -d : -f 2 | xargs)
     if [ -n "$cpu_mhz" ] && [[ "$cpu_mhz" =~ $float_regex ]] && [ "${cpu_mhz%.*}" -gt 0 ]; then
-        debug "Found CPU with $cpu_mhz MHz"
+        echo "Found CPU with $cpu_mhz MHz"
         unset CPU_MHZ
     else
-        debug "Unable to determine CPU Frequency - setting a default of 1.5 GHz so steamcmd won't complain"
+        echo "Unable to determine CPU Frequency - setting a default of 1.5 GHz so steamcmd won't complain"
         export CPU_MHZ="1500.000"
     fi
 }
