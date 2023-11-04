@@ -60,9 +60,9 @@ function Backup() {
 
     // Run backup every 10 minutes
     backupIntervalID = setInterval(() => {
+      const timestamp = moment().format();
       console.log(clc.blue(`GOING TO CREATE INCREMENTAL BACKUP ${timestamp}...`));
 
-      const timestamp = moment().format();
       const files = fs.readdirSync('/astroneer/Astro/Saved/SaveGames');
       const file = head(files);
 
