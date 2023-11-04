@@ -3,6 +3,9 @@ const fs = require('fs-extra');
 const ini = require('ini');
 const { get, setWith, isNil } = require('lodash');
 const axios = require('axios');
+const ac = new AbortController();
+
+const { signal } = ac;
 
 function Config() {
   /**
@@ -11,9 +14,6 @@ function Config() {
    * @return  {Promise}
    */
   function ensureConfigFiles() {
-    const ac = new AbortController();
-    const { signal } = ac;
-
     fs.ensureDirSync('/astroneer/Astro/Saved/Config/WindowsServer');
 
     let engineIni = false;
