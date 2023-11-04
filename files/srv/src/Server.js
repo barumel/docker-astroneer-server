@@ -1,5 +1,6 @@
 const { spawn } = require('child_process');
 const clc = require('cli-color');
+const fs = require('fs-extra');
 
 const Config = require('./Config');
 const HealthCheck = require('./HealthCheck');
@@ -66,6 +67,12 @@ function AstroneerServer() {
       await config.init();
       console.log(clc.green('CONFIGFILES WERE CREATED. SHUT DOWN THE SERVER, UPDATE CONFIG AND THEN RESTART'));
       await stop();
+
+      // Copy existing save from /tmp if available
+      if (fs.existsSync('/tmp/SERVER.savegame')) {
+        fs.ensureDirSync('/astroneer/Astro/Saved/SaveGames');
+        fs.copySync('/tmp/SERVER.savegame', '/astroneer/Astro/Saved/SaveGames/SERVER.savegame');
+      }
     }
 
     // Update config
