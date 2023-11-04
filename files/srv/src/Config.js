@@ -26,14 +26,14 @@ function Config() {
         if (eventType === 'change' && filename === 'AstroServerSettings.ini') astroIni = true;
         if (eventType === 'change' && filename === 'Engine.ini') engineIni = true;
 
-        // Files may change multiple times. If both changed, wait another 20 second to make sure all changes are applied
+        // Files may change multiple times. If both changed, wait another 60 second to make sure all changes are applied
         if (!fired && (astroIni && engineIni)) {
-          console.log(clc.green('CONFIG FILES CREATED. WAIT FOR ANOTHER 40 SECONDS TO MAKE SURE ALL CHANGES WERE APPLIED...'));
+          console.log(clc.green('CONFIG FILES CREATED. WAIT FOR ANOTHER 60 SECONDS TO MAKE SURE ALL CHANGES WERE APPLIED...'));
           fired = true;
           setTimeout(() => {
             ac.abort();
             resolve();
-          }, 40000);
+          }, 60000);
         }
       });
     });
