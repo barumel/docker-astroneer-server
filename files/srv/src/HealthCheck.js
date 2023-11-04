@@ -19,6 +19,13 @@ function HealthCheck() {
    */
   function init() {
     intervalID = setInterval(() => {
+      // It may take a while until the save game was created... Just log and wait or the next run
+      if (!fs.existsSync('/astroneer/Astro/Saved/SaveGames')) {
+        console.log(clc.yellow(`${moment().format()} UNABLE TO INIT HEALTH CHECK AS THERE IS NO SAVE GAME FILE!`));
+
+        return;
+      }
+
       const files = fs.readdirSync('/astroneer/Astro/Saved/SaveGames');
       const count = get(files, 'length', 0);
 

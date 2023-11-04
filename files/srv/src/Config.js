@@ -3,6 +3,9 @@ const fs = require('fs-extra');
 const ini = require('ini');
 const { get, setWith, isNil } = require('lodash');
 const axios = require('axios');
+const ac = new AbortController();
+
+const { signal } = ac;
 
 function Config() {
   /**
@@ -11,9 +14,6 @@ function Config() {
    * @return  {Promise}
    */
   function ensureConfigFiles() {
-    const ac = new AbortController();
-    const { signal } = ac;
-
     fs.ensureDirSync('/astroneer/Astro/Saved/Config/WindowsServer');
 
     let engineIni = false;
@@ -26,15 +26,17 @@ function Config() {
         if (eventType === 'change' && filename === 'AstroServerSettings.ini') astroIni = true;
         if (eventType === 'change' && filename === 'Engine.ini') engineIni = true;
 
-        // Files may change multiple times. If both changed, wait another 60 second to make sure all changes are applied
+        // Files may change multiple times. If both changed, wait another 40 second to make sure all changes are applied
+        // It seems that the server automatically stops after everything was done.
+        // This shouldn't be a problem as we are going to restart it after 40 seconds
         if (!fired && (astroIni && engineIni)) {
-          console.log(clc.green('CONFIG FILES CREATED. WAIT FOR ANOTHER 60 SECONDS TO MAKE SURE ALL CHANGES WERE APPLIED...'));
+          console.log(clc.green('CONFIG FILES CREATED. WAIT FOR ANOTHER 40 SECONDS TO MAKE SURE ALL CHANGES WERE APPLIED...'));
           fired = true;
           setTimeout(() => {
             console.log(clc.green('DONE'));
             ac.abort();
             resolve();
-          }, 60000);
+          }, 40000);
         }
       });
     });
@@ -131,9 +133,9 @@ function Config() {
     setWith(astro, '/Script/Astro.AstroServerSettings.PublicIP', getEnvVar('PUBLIC_IP', publicIp), Object);
     setWith(astro, '/Script/Astro.AstroServerSettings.OwnerName', getEnvVar('OWNER_NAME', 'Hans Wurst'), Object);
     setWith(astro, '/Script/Astro.AstroServerSettings.ServerPassword', getEnvVar('SERVER_PASSWORD', 'Well... that was clear'), Object);
-    setWith(astro, '/Script/Astro.AstroServerSettings.AutoSaveGameInterval', getEnvVar('SERVER_AUTO_SAVE_INTERVAL', 600), Object);
+    setWith(astro, '/Script/Astro.AstroServerSettings.AutoSaveGameInterval', getEnvVar('SERVER_AUTO_SAVE_INTERVAL', 60), Object);
     setWith(astro, '/Script/Astro.AstroServerSettings.EnableAutoRestart', 'False', Object);
-    // setWith(astro, '/Script/Astro.AstroServerSettings.ActiveSaveFileDescriptiveName', 'SERVER', Object);
+    setWith(astro, '/Script/Astro.AstroServerSettings.ActiveSaveFileDescriptiveName', 'SERVER', Object);
 
     fs.writeFileSync('/astroneer/Astro/Saved/Config/WindowsServer/AstroServerSettings.ini', ini.encode(astro));
   }
