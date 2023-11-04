@@ -66,6 +66,7 @@ function Backup() {
       const files = fs.readdirSync('/astroneer/Astro/Saved/SaveGames');
       const file = head(files);
 
+      // It may take a while until the save game was created... Just log and wait or the next run
       if (isNil(file)) {
         console.log(clc.yellow(`UNABLE TO CREATE BACKUP ${timestamp} AS THERE IS NO SAVE GAME FILE!`));
         return;
@@ -113,7 +114,7 @@ function Backup() {
     }
 
     fs.emptyDirSync('/astroneer/Astro/Saved/SaveGames')
-    fs.copySync(backup.path, `/astroneer/Astro/Saved/SaveGames/SAVE_1.savegame`);
+    fs.copySync(backup.path, `/astroneer/Astro/Saved/SaveGames/SERVER.savegame`);
 
     console.log(clc.green('SUCESSFULLY REPLACED SAVE GAME WITH BACKUP!'));
   }
