@@ -31,6 +31,7 @@ function Config() {
           console.log(clc.green('CONFIG FILES CREATED. WAIT FOR ANOTHER 60 SECONDS TO MAKE SURE ALL CHANGES WERE APPLIED...'));
           fired = true;
           setTimeout(() => {
+            console.log(clc.green('DONE'));
             ac.abort();
             resolve();
           }, 60000);
