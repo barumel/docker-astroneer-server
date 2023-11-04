@@ -1,6 +1,5 @@
 const { spawn } = require('child_process');
 const clc = require('cli-color');
-const fs = require('fs-extra');
 
 const Config = require('./Config');
 const HealthCheck = require('./HealthCheck');
@@ -108,6 +107,12 @@ function AstroneerServer() {
 
     child.on('exit', (code) => {
       console.log(`child process exited with code ${code}`);
+
+      // Sometimes the server just exits with.
+      // Try to restart...
+      if (code > 0) {
+        init();
+      }
     });
   }
 
