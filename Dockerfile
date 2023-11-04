@@ -30,6 +30,8 @@ RUN set -ex; \
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y locales tzdata
 
+RUN locale-gen en_US.UTF-8
+
 RUN set -ex; \
   wget https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/Debian_11/Release.key; \
   apt-key add Release.key; \
