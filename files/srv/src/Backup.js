@@ -60,11 +60,17 @@ function Backup() {
 
     // Run backup every 10 minutes
     backupIntervalID = setInterval(() => {
+      console.log(clc.blue(`GOING TO CREATE INCREMENTAL BACKUP ${timestamp}...`));
+
       const timestamp = moment().format();
       const files = fs.readdirSync('/astroneer/Astro/Saved/SaveGames');
       const file = head(files);
 
-      console.log(clc.blue(`GOING TO CREATE INCREMENTAL BACKUP ${timestamp}...`));
+      if (isNil(file)) {
+        console.log(clc.red(`UNABLE TO CREATE BACKUP ${timestamp} AS THERE IS NO SAVE GAME FILE!`));
+        return;
+      }
+
       // Copy file
       fs.copySync(`/astroneer/Astro/Saved/SaveGames/${file}`, `/backup/${timestamp}`);
       // Add backup to backups
