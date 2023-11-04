@@ -22,6 +22,12 @@ function AstroneerServer() {
     console.log(clc.red('GOING TO RESTORE LATEST BACKUP...'));
 
     const latest = backup.getLatest();
+
+    if (isNil(latest)) {
+      console.log(clc.red('NO LATEST BACKUP FOUND!'));
+      return;
+    }
+
     console.log(clc.blue(`LATEST BACKUP IS ${latest.timestamp}`));
     console.log(clc.blue('GOING TO STOP HEALTH CHECK / BACKUP /SERVER...'));
 
