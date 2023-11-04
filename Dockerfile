@@ -28,7 +28,7 @@ RUN set -ex; \
     curl \
     gnupg2;
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y locales tzdata
 
 RUN set -ex; \
   wget https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/Debian_11/Release.key; \

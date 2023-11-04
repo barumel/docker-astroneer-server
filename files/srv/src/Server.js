@@ -107,12 +107,6 @@ function AstroneerServer() {
 
     child.on('exit', (code) => {
       console.log(`child process exited with code ${code}`);
-
-      // Sometimes the server just exits with.
-      // Try to restart...
-      if (code > 0) {
-        init();
-      }
     });
   }
 
