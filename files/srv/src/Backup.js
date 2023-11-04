@@ -108,6 +108,7 @@ function Backup() {
    * @return  void
    */
   function restore(timestamp) {
+    console.log(clc.blue('--------------RESTORE BACKUP--------------'));
     console.log(clc.blue(`TRY TO RESTORE BACKUP FROM ${timestamp}`));
 
     const backup = backups.find((b) => b.timestamp === timestamp);
@@ -117,8 +118,10 @@ function Backup() {
       return;
     }
 
+    const dest = `/astroneer/Astro/Saved/SaveGames/SERVER$${moment(timestamp).format('YYYY.MM.DD-hh.mm.ss')}.savegame`;
+    console.log(clc.green(`GOING TO MOVE BACKUP TO ${dest}`));
     fs.emptyDirSync('/astroneer/Astro/Saved/SaveGames')
-    fs.copySync(backup.path, `/astroneer/Astro/Saved/SaveGames/SERVER.savegame`);
+    fs.copySync(backup.path, dest);
 
     console.log(clc.green('SUCESSFULLY REPLACED SAVE GAME WITH BACKUP!'));
   }
