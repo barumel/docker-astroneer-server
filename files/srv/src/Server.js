@@ -1,6 +1,8 @@
 const { spawn } = require('child_process');
 const clc = require('cli-color');
 const fs = require('fs-extra');
+const { isNil } = require('lodash');
+const moment = require('moment');
 
 const Config = require('./Config');
 const HealthCheck = require('./HealthCheck');
@@ -72,7 +74,9 @@ function AstroneerServer() {
       if (fs.existsSync('/tmp/SERVER.savegame')) {
         console.log(clc.green('FOUND EXISTING SAVE GAME IN /tmp. MOVE...'));
         fs.ensureDirSync('/astroneer/Astro/Saved/SaveGames');
-        fs.moveSync('/tmp/SERVER.savegame', '/astroneer/Astro/Saved/SaveGames/SERVER.savegame');
+        const dest = `/astroneer/Astro/Saved/SaveGames/SERVER$${moment().format('YYYY.MM.DD-hh.mm.ss')}.savegame`
+
+        fs.moveSync('/tmp/SERVER.savegame', dest);
       }
     }
 
