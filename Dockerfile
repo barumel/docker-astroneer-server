@@ -31,7 +31,7 @@ RUN set -ex; \
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata
 
 RUN set -ex; \
-  wget https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/Debian_10/Release.key; \
+  wget https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/Debian_11/Release.key; \
   apt-key add Release.key; \
   echo "deb https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/Debian_11 ./" >> /etc/apt/sources.list; \
   apt-get update; \
@@ -46,11 +46,12 @@ RUN set -ex; \
   apt-get clean;
 
 # Install node
-RUN curl -sL https://deb.nodesource.com/setup_18.x | bash -
-
 RUN set -ex; \
+  mkdir -p /etc/apt/keyrings; \
+  curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg; \
+  echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_18.x nodistro main" > /etc/apt/sources.list.d/nodesource.list; \
   apt-get update; \
-  apt-get install -y nodejs
+  apt-get -y install --no-install-recommends nodejs
 
 # https://steamcommunity.com/app/221410/discussions/2/616189106498372437/?ctp=10
 # https://hub.docker.com/r/chenhw2/dnsmasq/dockerfile
