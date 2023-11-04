@@ -19,7 +19,7 @@ function AstroneerServer() {
    * @return  void
    */
   async function onHealthCheckFailed() {
-    console.log(clc.red('--------------HEALT CHECK FAILED!--------------'));
+    console.log(clc.red('--------------HEALT CHECK FAILURE--------------'));
     console.log(clc.red('GOING TO RESTORE LATEST BACKUP...'));
 
     const latest = backup.getLatest();
@@ -36,6 +36,8 @@ function AstroneerServer() {
     start();
 
     console.log(clc.green('BACKUP SUCESSFULLY RESTORED!'));
+
+    console.log(clc.red('--------------HEALT CHECK FAILURE HANDLED--------------'));
   }
 
   /**
@@ -48,7 +50,7 @@ function AstroneerServer() {
    * @return  {Promise}
    */
   async function init() {
-    console.log(clc.blue('--------------INIT THE SERVER--------------'));
+    console.log(clc.blue('--------------SERVER INIT--------------'));
 
     if (!config.isInitialized()) {
       console.log(clc.yellow('NO CONFIG FILES FOUND. THIS MAY BE THE CASE IF THE SERVER RUNS THE FIRST TIME. WAIT...'));
@@ -70,6 +72,7 @@ function AstroneerServer() {
     // Init health check
     healthCheck.onFailed(onHealthCheckFailed);
     await healthCheck.init();
+    console.log(clc.blue('--------------SERVER INIT DONE--------------'));
   }
 
   /**
@@ -116,7 +119,7 @@ function AstroneerServer() {
    * @return void
    */
   async function stop() {
-    console.log(clc.blue('--------------STOP THE SERVER--------------'));
+    console.log(clc.blue('--------------SERVER STOP--------------'));
 
     return new Promise((resolve) => {
       console.log(clc.blue('GOING TO STOP THE SERVER...'));
@@ -127,7 +130,7 @@ function AstroneerServer() {
       process.kill(-child.pid, 'SIGTERM');
       process.kill(-child.pid, 'SIGKILL');
 
-      console.log(clc.green('SERVER STOPPED...'));
+      console.log(clc.blue('--------------SERVER STOP DONE--------------'));
 
       setTimeout(resolve, 10000);
     });

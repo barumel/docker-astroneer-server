@@ -113,7 +113,7 @@ function Backup() {
     }
 
     fs.emptyDirSync('/astroneer/Astro/Saved/SaveGames')
-    fs.copySync(backup.path, `/astroneer/Astro/Saved/SaveGames/SERVER.savegame`);
+    fs.copySync(backup.path, `/astroneer/Astro/Saved/SaveGames/SAVE_1.savegame`);
 
     console.log(clc.green('SUCESSFULLY REPLACED SAVE GAME WITH BACKUP!'));
   }
