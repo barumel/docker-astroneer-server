@@ -27,6 +27,8 @@ function Config() {
         if (eventType === 'change' && filename === 'Engine.ini') engineIni = true;
 
         // Files may change multiple times. If both changed, wait another 60 second to make sure all changes are applied
+        // It seems that the server automatically stops after everything was done.
+        // This shouldn't be a problem as we are going to restart it after 60 seconds
         if (!fired && (astroIni && engineIni)) {
           console.log(clc.green('CONFIG FILES CREATED. WAIT FOR ANOTHER 60 SECONDS TO MAKE SURE ALL CHANGES WERE APPLIED...'));
           fired = true;
