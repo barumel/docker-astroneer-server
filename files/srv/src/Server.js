@@ -70,7 +70,7 @@ function AstroneerServer() {
 
       // Copy existing save from /tmp if available
       if (fs.existsSync('/tmp/SERVER.savegame')) {
-        console.log(clc.green('FOUND EXISTING SAVE GAME IN /tmp. COPY...'));
+        console.log(clc.green('FOUND EXISTING SAVE GAME IN /tmp. MOVE...'));
         fs.ensureDirSync('/astroneer/Astro/Saved/SaveGames');
         fs.moveSync('/tmp/SERVER.savegame', '/astroneer/Astro/Saved/SaveGames/SERVER.savegame');
       }
