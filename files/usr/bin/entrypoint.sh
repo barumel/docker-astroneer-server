@@ -1,5 +1,20 @@
 #!/bin/bash
 
+# This works around the `Unable to determine CPU Frequency. Try defining CPU_MHZ.` steamcmd issue (#184).
+verify_cpu_mhz() {
+    local float_regex
+    local cpu_mhz
+    float_regex="^([0-9]+\\.?[0-9]*)\$"
+    cpu_mhz=$(grep "^cpu MHz" /proc/cpuinfo | head -1 | cut -d : -f 2 | xargs)
+    if [ -n "$cpu_mhz" ] && [[ "$cpu_mhz" =~ $float_regex ]] && [ "${cpu_mhz%.*}" -gt 0 ]; then
+        debug "Found CPU with $cpu_mhz MHz"
+        unset CPU_MHZ
+    else
+        debug "Unable to determine CPU Frequency - setting a default of 1.5 GHz so steamcmd won't complain"
+        export CPU_MHZ="1500.000"
+    fi
+}
+
 # Run wineboot on startup to make sure the WINEPREFIX directory is not empty.
 # This would normally be done when starting the application the first time
 # but as it required user interaction, the startup process hangs
@@ -12,37 +27,20 @@ echo "REMOVE XVFB LOCK FILE IF IT EXISTS"
 rm -rf /tmp/.X99-lock
 echo "DONE..."
 
-echo "START BACKUP"
-node /srv/backup.js &
+verify_cpu_mhz
+
+echo "UPDATE STEAM CMD"
+bash /steamcmd/steamcmd.sh +quit
+
+echo "UPDATE ASTRO SERVER"
+bash /steamcmd/steamcmd.sh +runscript /tmp/install.txt
 
 # Start the servier
 echo "RUN THE SERVER"
-node /srv/server.js
-
-
-
+node /srv/index.js
 
 
 echo "ENTRYPOINT SCRIPT DONE..."
 
 # Keep the container alive
 tail -f /dev/null
-
-
-
-
-
-
-
-# OLD STUFF
-# start Xvfb
-# xvfb_display=0
-# rm -rf /tmp/.X$xvfb_display-lock
-# Xvfb :$xvfb_display -screen 0, 640x480x24:32 -nolisten tcp &
-#export DISPLAY=:$xvfb_display
-
-# ./steamcmd.sh +runscript /tmp/install.txt
-
-# ./steamcmd.sh +@sSteamCmdForcePlatformType windows +login anonymous +force_install_dir /astroneer +app_update 728470 validate +quit
-
-# wine ${STEAMAPPDIR}/AstroServer.exe -nosteamclient -game -server -log -nosteamclient -game -server -log
