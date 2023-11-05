@@ -171,13 +171,13 @@ function Backup() {
       .value()
 
     console.log(clc.blue('THE FOLLOWING BACKUPS WILL BE COPIED TO THE DAILY FOLDER:'));
-    console.log(files.move);
+    console.log(get(files, 'move', []));
 
     // Copy daily files
     get(files, 'move', []).forEach((b) => fs.copySync(b.path, `/backup/daily/${b.timestamp}`));
 
     console.log(clc.blue('THE FOLLOWING BACKUPS WILL BE REMOVED:'));
-    console.log(files.remove);
+    console.log(get(files, 'remove', []));
 
     // Remove unused files
     get(files, 'remove', []).forEach((b) => fs.removeSync(b.path));
