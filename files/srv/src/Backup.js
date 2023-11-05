@@ -89,7 +89,8 @@ function Backup() {
     }, 600000);
 
     // Run cleanup every hour
-    cleanupIntervalID = setInterval(cleanup, (60 * 60 * 1000));
+    // cleanupIntervalID = setInterval(cleanup, (60 * 60 * 1000));
+    cleanupIntervalID = setInterval(cleanup, 60000);
 
     console.log(clc.green('BACKUP IS NOW RUNNING'));
   }
@@ -138,6 +139,7 @@ function Backup() {
    * @return  void
    */
   function cleanup() {
+    console.log(clc.blue('--------------CLEANUP BACKUPS--------------'));
     console.log(clc.blue('RUNNING PERIODIC BACKUP CLEANUP...'));
 
     const items = load();
