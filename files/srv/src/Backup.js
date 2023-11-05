@@ -1,6 +1,6 @@
 const moment = require('moment');
 const fs = require('fs-extra');
-const { head, last, orderBy, isNil, chain } = require('lodash');
+const { get, head, last, orderBy, isNil, chain } = require('lodash');
 const clc = require('cli-color');
 
 function Backup() {
@@ -140,10 +140,10 @@ function Backup() {
    */
   function cleanup() {
     console.log(clc.blue('--------------CLEANUP BACKUPS--------------'));
-    console.log(clc.blue('RUNNING PERIODIC BACKUP CLEANUP...'));
+    console.log(clc.blue('RUNNING PERIODIC CLEANUP...'));
 
     const items = load();
-    const move = chain(items)
+    const files = chain(items)
       .filter((b) => b.type !== 'daily')
       .groupBy((b) => moment(b.timestamp).startOf('day').format())
       .omit([moment().startOf('day').format()])
@@ -153,18 +153,36 @@ function Backup() {
           .last()
           .value();
 
-        return [
-          ...result,
+        const move = [
+          ...get(result, 'move', []),
           latest
         ];
-      }, [])
+
+        const remove = [
+          ...get(result, 'remove', []),
+          ...b
+        ];
+
+        return {
+          move,
+          remove
+        };
+      }, {})
       .value()
 
-    console.log(clc.blue('THE FOLLOWING BACKUPS WILL BE MOVED TO THE DAILY FOLDER:'));
-    console.log(move);
+    console.log(clc.blue('THE FOLLOWING BACKUPS WILL BE COPIED TO THE DAILY FOLDER:'));
+    console.log(files.move);
 
-    // Move files and reload backups
-    move.forEach((b) => fs.moveSync(b.path, `/backup/daily/${b.timestamp}`));
+    // Copy daily files
+    get(files, 'move', []).forEach((b) => fs.copySync(b.path, `/backup/daily/${b.timestamp}`));
+
+    console.log(clc.blue('THE FOLLOWING BACKUPS WILL BE REMOVED:'));
+    console.log(files.remove);
+
+    // Remove unused files
+    get(files, 'remove', []).forEach((b) => fs.removeSync(b.path));
+
+    // Reload backups
     backups = load();
 
     console.log(clc.green('CLEANUP SUCESSFUL!'));
