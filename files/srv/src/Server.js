@@ -1,5 +1,8 @@
 const { spawn } = require('child_process');
 const clc = require('cli-color');
+const fs = require('fs-extra');
+const { isNil } = require('lodash');
+const moment = require('moment');
 
 const Config = require('./Config');
 const HealthCheck = require('./HealthCheck');
@@ -22,6 +25,12 @@ function AstroneerServer() {
     console.log(clc.red('GOING TO RESTORE LATEST BACKUP...'));
 
     const latest = backup.getLatest();
+
+    if (isNil(latest)) {
+      console.log(clc.red('NO LATEST BACKUP FOUND!'));
+      return;
+    }
+
     console.log(clc.blue(`LATEST BACKUP IS ${latest.timestamp}`));
     console.log(clc.blue('GOING TO STOP HEALTH CHECK / BACKUP /SERVER...'));
 
@@ -60,6 +69,18 @@ function AstroneerServer() {
       await config.init();
       console.log(clc.green('CONFIGFILES WERE CREATED. SHUT DOWN THE SERVER, UPDATE CONFIG AND THEN RESTART'));
       await stop();
+
+      // Copy existing save from /tmp if available
+      if (fs.existsSync('/tmp/SERVER.savegame')) {
+        fs.ensureDirSync('/astroneer/Astro/Saved/SaveGames');
+        const dest = `/astroneer/Astro/Saved/SaveGames/SERVER$${moment().format('YYYY.MM.DD-hh.mm.ss')}.savegame`;
+
+        console.log(clc.blue('--------------EXISTING SAVE--------------'));
+        console.log(clc.blue(`FOUND EXISTING SAVE GAME IN /tmp. GOINT TO COPY TO BACKUP AND MOVE TO ${dest}`));
+
+        fs.copySync('/tmp/SERVER.savegame', `/backup/${moment().format()}`);
+        fs.moveSync('/tmp/SERVER.savegame', dest);
+      }
     }
 
     // Update config

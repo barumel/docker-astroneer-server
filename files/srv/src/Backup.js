@@ -1,6 +1,6 @@
 const moment = require('moment');
 const fs = require('fs-extra');
-const { head, last, orderBy, isNil, chain } = require('lodash');
+const { get, head, last, orderBy, isNil, chain } = require('lodash');
 const clc = require('cli-color');
 
 function Backup() {
@@ -14,6 +14,10 @@ function Backup() {
    * @return  {String}  latest  Latest backup
    */
   function getLatest() {
+    backups = load();
+
+    console.log('GET LATEST', backups);
+
     return last(backups);
   }
 
@@ -34,7 +38,7 @@ function Backup() {
       }));
 
     const incremental = fs
-      .readdirSync('/backup/daily')
+      .readdirSync('/backup')
       .filter((file) => !fs.lstatSync(`/backup/${file}`).isDirectory())
       .map((f) => ({
         path: `/backup/${f}`,
@@ -74,8 +78,13 @@ function Backup() {
 
       // Copy file
       fs.copySync(`/astroneer/Astro/Saved/SaveGames/${file}`, `/backup/${timestamp}`);
+
       // Add backup to backups
-      backups.push({ path: `/backup/${timestamp}`, timestamp });
+      backups.push({
+        path: `/backup/${timestamp}`,
+        timestamp,
+        type: 'incremental'
+      });
       console.log(clc.green(`INCREMENTAL BACKUP ${timestamp} CREATED!`));
     }, 600000);
 
@@ -104,6 +113,7 @@ function Backup() {
    * @return  void
    */
   function restore(timestamp) {
+    console.log(clc.blue('--------------RESTORE BACKUP--------------'));
     console.log(clc.blue(`TRY TO RESTORE BACKUP FROM ${timestamp}`));
 
     const backup = backups.find((b) => b.timestamp === timestamp);
@@ -113,8 +123,10 @@ function Backup() {
       return;
     }
 
+    const dest = `/astroneer/Astro/Saved/SaveGames/SERVER$${moment(timestamp).format('YYYY.MM.DD-hh.mm.ss')}.savegame`;
+    console.log(clc.green(`GOING TO MOVE BACKUP TO ${dest}`));
     fs.emptyDirSync('/astroneer/Astro/Saved/SaveGames')
-    fs.copySync(backup.path, `/astroneer/Astro/Saved/SaveGames/SERVER.savegame`);
+    fs.copySync(backup.path, dest);
 
     console.log(clc.green('SUCESSFULLY REPLACED SAVE GAME WITH BACKUP!'));
   }
@@ -126,10 +138,11 @@ function Backup() {
    * @return  void
    */
   function cleanup() {
-    console.log(clc.blue('RUNNING PERIODIC BACKUP CLEANUP...'));
+    console.log(clc.blue('--------------CLEANUP BACKUPS--------------'));
+    console.log(clc.blue('RUNNING PERIODIC CLEANUP...'));
 
     const items = load();
-    const move = chain(items)
+    const files = chain(items)
       .filter((b) => b.type !== 'daily')
       .groupBy((b) => moment(b.timestamp).startOf('day').format())
       .omit([moment().startOf('day').format()])
@@ -139,18 +152,36 @@ function Backup() {
           .last()
           .value();
 
-        return [
-          ...result,
+        const move = [
+          ...get(result, 'move', []),
           latest
         ];
-      }, [])
+
+        const remove = [
+          ...get(result, 'remove', []),
+          ...b
+        ];
+
+        return {
+          move,
+          remove
+        };
+      }, {})
       .value()
 
-    console.log(clc.blue('THE FOLLOWING BACKUPS WILL BE MOVED TO THE DAILY FOLDER:'));
-    console.log(move);
+    console.log(clc.blue('THE FOLLOWING BACKUPS WILL BE COPIED TO THE DAILY FOLDER:'));
+    console.log(get(files, 'move', []));
 
-    // Move files and reload backups
-    move.forEach((b) => fs.moveSync(b.path, `/backup/daily/${b.timestamp}`));
+    // Copy daily files
+    get(files, 'move', []).forEach((b) => fs.copySync(b.path, `/backup/daily/${b.timestamp}`));
+
+    console.log(clc.blue('THE FOLLOWING BACKUPS WILL BE REMOVED:'));
+    console.log(get(files, 'remove', []));
+
+    // Remove unused files
+    get(files, 'remove', []).forEach((b) => fs.removeSync(b.path));
+
+    // Reload backups
     backups = load();
 
     console.log(clc.green('CLEANUP SUCESSFUL!'));
