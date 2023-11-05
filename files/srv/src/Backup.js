@@ -14,6 +14,10 @@ function Backup() {
    * @return  {String}  latest  Latest backup
    */
   function getLatest() {
+    backups = load();
+
+    console.log('GET LATEST', backups);
+
     return last(backups);
   }
 
