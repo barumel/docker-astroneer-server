@@ -38,7 +38,7 @@ function Backup() {
       }));
 
     const incremental = fs
-      .readdirSync('/backup/daily')
+      .readdirSync('/backup')
       .filter((file) => !fs.lstatSync(`/backup/${file}`).isDirectory())
       .map((f) => ({
         path: `/backup/${f}`,
