@@ -74,6 +74,7 @@ function Backup() {
 
       // Copy file
       fs.copySync(`/astroneer/Astro/Saved/SaveGames/${file}`, `/backup/${timestamp}`);
+
       // Add backup to backups
       backups.push({
         path: `/backup/${timestamp}`,
