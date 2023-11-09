@@ -67,7 +67,7 @@ function AstroneerServer() {
       start();
 
       await config.init();
-      console.log(clc.green('CONFIGFILES WERE CREATED. SHUT DOWN THE SERVER, UPDATE CONFIG AND THEN RESTART'));
+      console.log(clc.green('CONFIG FILES WERE CREATED. SHUT DOWN THE SERVER, UPDATE CONFIG AND THEN RESTART'));
       await stop();
 
       // Copy existing save from /tmp if available
