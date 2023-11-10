@@ -2,17 +2,16 @@ version: '3.1'
 
 services:
   server:
+    image: "barumel/docker-astroneer-server:latest"
     build:
       context: ./
       dockerfile: Dockerfile
     environment:
-      - "SERVER_PORT=${SERVER_PORT}"
-      - "SERVER_NAME=${SERVER_NAME}"
-      - "SERVER_PASSWORD=${SERVER_PASSWORD}"
-      - "OWNER_NAME=${OWNER_NAME}"
-      - "SERVER_AUTO_SAVE_INTERVALL=${SERVER_AUTO_SAVE_INTERVAL}"
+      - "ASTRO_SERVER_PORT=${ASTRO_SERVER_PORT}"
+      - "ASTRO_SERVER_NAME=${ASTRO_SERVER_NAME}"
+      - "ASTRO_SERVER_PASSWORD=${ASTRO_SERVER_PASSWORD}"
+      - "ASTRO_SERVER_OWNER_NAME=${ASTRO_SERVER_OWNER_NAME}"
       - "TZ=${TZ}"
-      - "SERVER_AUTO_RESTART_TIME=${SERVER_AUTO_RESTART_TIME}"
     ports:
       - 8777:8777/tcp
       - 8777:8777/udp

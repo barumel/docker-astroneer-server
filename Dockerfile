@@ -60,15 +60,6 @@ RUN set -ex; \
   apt-get update; \
   apt-get -y install --no-install-recommends nodejs
 
-# https://steamcommunity.com/app/221410/discussions/2/616189106498372437/?ctp=10
-# https://hub.docker.com/r/chenhw2/dnsmasq/dockerfile
-RUN set -ex; \
-  apt-get remove --purge -y dnsmasq; \
-  apt-get update; \
-  apt-get install dnsmasq; \
-  echo 'conf-dir=/etc/dnsmasq.d/,*.conf' > /etc/dnsmasq.conf; \
-  echo "user=root" >> /etc/dnsmasq.conf
-
 COPY ./files/ ./
 
 RUN rm -rf /srv/node_modules
