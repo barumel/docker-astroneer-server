@@ -105,6 +105,18 @@ function Config() {
     await ensureConfigFiles();
   }
 
+  function validate() {
+    const required = ['SERVER_NAME', 'OWNER_NAME', 'SERVER_PASSWORD'];
+
+    required.forEach((key) => {
+      const value = getEnvVar(key);
+
+      if (isNil(value)) {
+        throw new Error(`ENVIRONMENT VARIABLE ${key} IS REQUIRED BUT NOT SET!`);
+      }
+    })
+  }
+
   /**
    * Update config files with values from evn
    *
@@ -113,13 +125,15 @@ function Config() {
   async function update() {
     console.log(clc.green('GOING TO UPDATE THE SERVER CONFIGURATION BASED ON CURRENT ENV VARIABLES...'));
 
+    validate();
+
     const engine = ini.decode(fs.readFileSync('/astroneer/Astro/Saved/Config/WindowsServer/Engine.ini', 'utf8'));
     const astro = ini.decode(fs.readFileSync('/astroneer/Astro/Saved/Config/WindowsServer/AstroServerSettings.ini', 'utf8'));
 
     // ini seems to remove entries from file (bad formatted??)
     // Append stuff instead replace. does not work properly atm. as it add stuff multiple times (on every startup)
     // TODO: Make sure old entries are removed before appending shit...
-    setWith(engine, 'URL.Port', getEnvVar('SEVER_PORT', '8777'), Object);
+    setWith(engine, 'URL.Port', getEnvVar('ASTRO_SEVER_PORT', '8777'), Object);
     setWith(engine, 'SystemSettings', { 'net.AllowEncryption': 'False' }, Object);
     setWith(engine, '/Script/OnlineSubsystemUtils.IpNetDriver', {
       MaxClientRate: 1048576,
@@ -129,11 +143,11 @@ function Config() {
     fs.writeFileSync('/astroneer/Astro/Saved/Config/WindowsServer/Engine.ini', ini.encode(engine));
 
     const publicIp = await getPublicIp();
-    setWith(astro, '/Script/Astro.AstroServerSettings.ServerName', getEnvVar('SERVER_NAME', 'Ooops... i forgot to set a server name'), Object);
-    setWith(astro, '/Script/Astro.AstroServerSettings.PublicIP', getEnvVar('PUBLIC_IP', publicIp), Object);
-    setWith(astro, '/Script/Astro.AstroServerSettings.OwnerName', getEnvVar('OWNER_NAME', 'Hans Wurst'), Object);
-    setWith(astro, '/Script/Astro.AstroServerSettings.ServerPassword', getEnvVar('SERVER_PASSWORD', 'Well... that was clear'), Object);
-    setWith(astro, '/Script/Astro.AstroServerSettings.AutoSaveGameInterval', getEnvVar('SERVER_AUTO_SAVE_INTERVAL', 60), Object);
+    setWith(astro, '/Script/Astro.AstroServerSettings.ServerName', getEnvVar('ASTRO_SERVER_NAME', 'Ooops... i forgot to set a server name'), Object);
+    setWith(astro, '/Script/Astro.AstroServerSettings.PublicIP', getEnvVar('ASTRO_SERVER_PUBLIC_IP', publicIp), Object);
+    setWith(astro, '/Script/Astro.AstroServerSettings.OwnerName', getEnvVar('ASTRO_OWNER_NAME', 'Hans Wurst'), Object);
+    setWith(astro, '/Script/Astro.AstroServerSettings.ServerPassword', getEnvVar('ASTRO_SERVER_PASSWORD', 'Well... that was clear'), Object);
+    setWith(astro, '/Script/Astro.AstroServerSettings.AutoSaveGameInterval', getEnvVar('ASTRO_SERVER_AUTO_SAVE_INTERVAL', 60), Object);
     setWith(astro, '/Script/Astro.AstroServerSettings.EnableAutoRestart', 'False', Object);
     setWith(astro, '/Script/Astro.AstroServerSettings.ActiveSaveFileDescriptiveName', 'SERVER', Object);
 
