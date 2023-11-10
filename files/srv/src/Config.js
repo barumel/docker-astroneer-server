@@ -106,7 +106,7 @@ function Config() {
   }
 
   function validate() {
-    const required = ['SERVER_NAME', 'OWNER_NAME', 'SERVER_PASSWORD'];
+    const required = ['ASTRO_SERVER_NAME', 'ASTRO_SERVER_OWNER_NAME', 'ASTRO_SERVER_PASSWORD'];
 
     required.forEach((key) => {
       const value = getEnvVar(key);
@@ -133,7 +133,7 @@ function Config() {
     // ini seems to remove entries from file (bad formatted??)
     // Append stuff instead replace. does not work properly atm. as it add stuff multiple times (on every startup)
     // TODO: Make sure old entries are removed before appending shit...
-    setWith(engine, 'URL.Port', getEnvVar('ASTRO_SEVER_PORT', '8777'), Object);
+    setWith(engine, 'URL.Port', getEnvVar('ASTRO_SERVER_PORT', '8777'), Object);
     setWith(engine, 'SystemSettings', { 'net.AllowEncryption': 'False' }, Object);
     setWith(engine, '/Script/OnlineSubsystemUtils.IpNetDriver', {
       MaxClientRate: 1048576,
@@ -145,7 +145,7 @@ function Config() {
     const publicIp = await getPublicIp();
     setWith(astro, '/Script/Astro.AstroServerSettings.ServerName', getEnvVar('ASTRO_SERVER_NAME', 'Ooops... i forgot to set a server name'), Object);
     setWith(astro, '/Script/Astro.AstroServerSettings.PublicIP', getEnvVar('ASTRO_SERVER_PUBLIC_IP', publicIp), Object);
-    setWith(astro, '/Script/Astro.AstroServerSettings.OwnerName', getEnvVar('ASTRO_OWNER_NAME', 'Hans Wurst'), Object);
+    setWith(astro, '/Script/Astro.AstroServerSettings.OwnerName', getEnvVar('ASTRO_SERVER_OWNER_NAME', 'Hans Wurst'), Object);
     setWith(astro, '/Script/Astro.AstroServerSettings.ServerPassword', getEnvVar('ASTRO_SERVER_PASSWORD', 'Well... that was clear'), Object);
     setWith(astro, '/Script/Astro.AstroServerSettings.AutoSaveGameInterval', getEnvVar('ASTRO_SERVER_AUTO_SAVE_INTERVAL', 60), Object);
     setWith(astro, '/Script/Astro.AstroServerSettings.EnableAutoRestart', 'False', Object);

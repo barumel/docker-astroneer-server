@@ -24,7 +24,6 @@ RUN set -ex; \
     xvfb \
     ca-certificates \
     lib32gcc-s1 \
-    dnsmasq \
     winbind \
     curl \
     gnupg2;
