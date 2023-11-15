@@ -16,8 +16,6 @@ function Backup() {
   function getLatest() {
     backups = load();
 
-    console.log('GET LATEST', backups);
-
     return last(backups);
   }
 
