@@ -106,23 +106,21 @@ bash restore-backup.sh -c <<CONTAINER_ID>> -b <<BACKUP_NAME>>
 #### Manually restore
 
 ```
-```
 # Copy the backup to the local dir
-docker cp <<CONTAINER_ID>>:/backup/<<BACKUP FILE PATH>> ./SERVER.savegame
+docker cp <<CONTAINER_ID>>:/backup/<<BACKUP FILE PATH>> ./SERVER.savegame 
 
 # Stop the server
-docker compose stop
+docker compose stop 
 
 # Create but don't start the container
-docker-compose create
+docker-compose create 
 
 # Get the container id
-docker ps -a
+docker ps -a 
 
 # Copy the backup file
-docker cp SERVER.savegame <<CONTAINER_ID>>:/backup/restore/SERVER.savegame
+docker cp SERVER.savegame <<CONTAINER_ID>>:/backup/restore/SERVER.savegame 
 
 # Start the server
 docker compose up -d
-```
 ```
