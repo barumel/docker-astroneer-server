@@ -5,11 +5,7 @@
 The current astroneer server implementation uses an encryption algorithm that is not supported by wine's implementation of bcrypt.dll.
 Due to this issue, we have to disable encryption on the server side to make things work.
 
-
-
 To be able to connect to the server you will have to disable encryption on the client side as well.
-
-
 
 Locate the Engine.ini file on your file system (usually located under %AppData% -> Local -> Astro -> Saved -> Config) and add the following line to the bottom of the file:
 
@@ -17,6 +13,8 @@ Locate the Engine.ini file on your file system (usually located under %AppData% 
 [SystemSettings]
 net.AllowEncryption=False
 ```
+
+## 
 
 ## Configuration
 
@@ -30,40 +28,13 @@ The following configuration values are currently available
 | ASTRO_SERVER_OWNER_NAME | Yes      |               | Name or the server owner (Steam username)                                                                                     |
 | ASTRO_SERVER_PASSWORD   | Yes      |               | Server password                                                                                                               |
 
-## 
-
-## Using an existing save game
-
-You can import an existing save game to the server via the following commands.
-
-
-
-Be aware that this must be done BEFORE the server runs the first time.
-
-```
-# Create the server but do not start it
-docker componse create 
-
-# Get the container id via docker ps
-docker ps -a
-
-# Copy the save game to the container's /tmp dir
-docker cp MY_SAVE_GAME.savegame <<CONTAINER ID>>:/tmp/SERVER.savegame
-```
-
-
-
-The server will check the /tmp dir on the first run and copy the save game to the SaveGames folder.
-
 
 
 ## Starting the server
 
-You can use the provided docker-compose.yml to start the server. 
+You can use the provided docker-compose.yml to start the server.
 
 Just create a .env file in the same directory and add the necessary env vars.
-
-
 
 If you want to import an existing save game, do it like described above.
 
@@ -73,9 +44,33 @@ Then run:
 docker compose up -d
 ```
 
+This may take a few minutes if the server runs the first time as it installs the server software via steamcmd and launches the server to make sure all necessary .ini files were created. 
 
 
-This may take a few minutes if the server runs the first time as it installs the server software via steamcmd and launches the server to make sure all necessary .ini files were created.
+
+## Using an existing save game
+
+You can import an existing save game to the server via the following commands.
+
+```
+# Stop the server if it is already running
+docker compose down
+
+# Create the container but do not start it
+docker componse create 
+
+# Get the container id via docker ps
+docker ps -a
+
+# Copy the save game to the container's /backup/restore dir
+docker cp MY_SAVE_GAME.savegame <<CONTAINER ID>>:/backup/restore/SERVER.savegame
+
+
+# Start the server
+docker compose up -d
+```
+
+The server will check the /tmp dir on the first run and copy the save game to the SaveGames folder.
 
 
 
@@ -87,30 +82,47 @@ These backups are only kept for the current day and are removed by a cleanup job
 
 The latest backup of each day gets moved to `/backup/daily` 
 
-### 
-
-### Restoring a backup
-
-Atm. there is no script to restore a backup (WIP) but you can restore a backup manually with the following steps:
 
 
+### Restore a backup
+
+#### restore-backup.sh
+
+If you use the provided docker-compose.yml you can use the restore-backup.sh script provided in this repo.
+
+Be aware that the container must be running when using the script.
 
 ```
-# Copy the backup
-docker cp <<CONTAINER_ID>>:/backup/<<BACKUP FILE PATH>> ./MY_BACKUP.savegame
+# Get the container id
+docker ps
+
+# List all backups and copy the name of the backup you want to restore (without /daily)
+bash list-backups.sh -c <<CONTAINER_ID>>
+
+# Run the backup script
+bash restore-backup.sh -c <<CONTAINER_ID>> -b <<BACKUP_NAME>>
+```
+
+#### Manually restore
+
+```
+```
+# Copy the backup to the local dir
+docker cp <<CONTAINER_ID>>:/backup/<<BACKUP FILE PATH>> ./SERVER.savegame
 
 # Stop the server
 docker compose stop
 
-# Get the volume name (volume astroneer: in docker-compose.yml)
-docker volume ls
+# Create but don't start the container
+docker-compose create
 
-# Remove the astroneer volume that contains the current save game
-docker volume rm <<VOLUME NAME>>
+# Get the container id
+docker ps -a
 
-# Copy the backup to the container's /tmp dir
-docker cp MY_BACKUP.savegame <<CONTAINER ID>>:/tmp/SERVER.savegame
+# Copy the backup file
+docker cp SERVER.savegame <<CONTAINER_ID>>:/backup/restore/SERVER.savegame
 
-# Run the server
+# Start the server
 docker compose up -d
+```
 ```
