@@ -41,7 +41,4 @@ echo "RUN THE SERVER"
 node /srv/index.js
 
 
-echo "ENTRYPOINT SCRIPT DONE..."
-
-# Keep the container alive
-tail -f /dev/null
+echo "END OF ENTRYPOINT REACHED... SEEMS THAT THE SERVER DID QUIT UNEXPECTEDLY!"

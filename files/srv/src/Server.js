@@ -69,18 +69,21 @@ function AstroneerServer() {
       await config.init();
       console.log(clc.green('CONFIG FILES WERE CREATED. SHUT DOWN THE SERVER, UPDATE CONFIG AND THEN RESTART'));
       await stop();
+    }
 
-      // Copy existing save from /tmp if available
-      if (fs.existsSync('/tmp/SERVER.savegame')) {
-        fs.ensureDirSync('/astroneer/Astro/Saved/SaveGames');
-        const dest = `/astroneer/Astro/Saved/SaveGames/SERVER$${moment().format('YYYY.MM.DD-hh.mm.ss')}.savegame`;
+    // Copy existing save from /backup/restore/SERVER.savegame if available
+    if (fs.existsSync('/backup/restore/SERVER.savegame')) {
+      // Ensure and empty dir
+      fs.ensureDirSync('/astroneer/Astro/Saved/SaveGames');
+      fs.emptyDirSync('/astroneer/Astro/Saved/SaveGames');
 
-        console.log(clc.blue('--------------EXISTING SAVE--------------'));
-        console.log(clc.blue(`FOUND EXISTING SAVE GAME IN /tmp. GOING TO COPY TO BACKUP AND MOVE TO ${dest}`));
+      const dest = `/astroneer/Astro/Saved/SaveGames/SERVER$${moment().format('YYYY.MM.DD-HH.mm.ss')}.savegame`;
 
-        fs.copySync('/tmp/SERVER.savegame', `/backup/${moment().format()}`);
-        fs.moveSync('/tmp/SERVER.savegame', dest);
-      }
+      console.log(clc.blue('--------------EXISTING SAVE--------------'));
+      console.log(clc.blue(`FOUND EXISTING SAVE GAME IN /backup/restore/SERVER.savegame! GOING TO COPY TO BACKUP AND MOVE TO ${dest}`));
+
+      fs.copySync('/backup/restore/SERVER.savegame', `/backup/${moment().format()}`);
+      fs.moveSync('/backup/restore/SERVER.savegame', dest);
     }
 
     // Update config
