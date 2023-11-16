@@ -1,6 +1,6 @@
 const moment = require('moment');
 const fs = require('fs-extra');
-const { get, head, last, orderBy, isNil, chain } = require('lodash');
+const { get, head, last, orderBy, isNil, chain, compact } = require('lodash');
 const clc = require('cli-color');
 
 function Backup() {
@@ -15,8 +15,6 @@ function Backup() {
    */
   function getLatest() {
     backups = load();
-
-    console.log('GET LATEST', backups);
 
     return last(backups);
   }
@@ -60,6 +58,7 @@ function Backup() {
     console.log(clc.blue('INIT BACKUP...'));
 
     fs.ensureDirSync('/backup/daily');
+    fs.ensureDirSync('/backup/restore');
     backups = load();
 
     // Run backup every 10 minutes
@@ -123,7 +122,7 @@ function Backup() {
       return;
     }
 
-    const dest = `/astroneer/Astro/Saved/SaveGames/SERVER$${moment(timestamp).format('YYYY.MM.DD-hh.mm.ss')}.savegame`;
+    const dest = `/astroneer/Astro/Saved/SaveGames/SERVER$${moment(timestamp).format('YYYY.MM.DD-HH.mm.ss')}.savegame`;
     console.log(clc.green(`GOING TO MOVE BACKUP TO ${dest}`));
     fs.emptyDirSync('/astroneer/Astro/Saved/SaveGames')
     fs.copySync(backup.path, dest);
@@ -147,14 +146,15 @@ function Backup() {
       .groupBy((b) => moment(b.timestamp).startOf('day').format())
       .omit([moment().startOf('day').format()])
       .reduce((result, b) => {
-        const latest = chain(b)
-          .orderBy(['timestamp'], ['asc'])
-          .last()
-          .value();
+        const ordered = orderBy(b, ['timestamp'], ['asc']);
+        const index = Math.floor(Math.abs(ordered.length - 1) / 2);
+
+        const mid = get(ordered, index);
+        const latest = last(ordered);
 
         const move = [
           ...get(result, 'move', []),
-          latest
+          ...compact([mid, latest])
         ];
 
         const remove = [

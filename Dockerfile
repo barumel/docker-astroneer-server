@@ -10,6 +10,8 @@ RUN set -ex; \
   mkdir -p /steamcmd; \
   mkdir -p /astroneer; \
   mkdir -p /backup; \
+  mkdir -p /backup/daily; \
+  mkdir -p /backup/restore; \
   mkdir -p /wine
 
 RUN set -ex; \
