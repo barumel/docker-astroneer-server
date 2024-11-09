@@ -65,7 +65,6 @@ RUN set -ex; \
   chown -R steam:root /geproton; \
   chown -R steam:root /astroneer; \
   chown -R steam:root /backup; \
-  chown -R steam:root /wine; \
   chown -R steam:root /tmp
 
 WORKDIR /steamcmd
