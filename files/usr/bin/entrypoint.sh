@@ -29,6 +29,14 @@ bash /steamcmd/steamcmd.sh +quit
 echo "UPDATE ASTRO SERVER"
 bash /steamcmd/steamcmd.sh +runscript /tmp/install.txt
 
+if [ ! -f /astroneer/initialized ]; then
+  echo "No init file found. Run the server the first time to init config files and wait until it shuts down..."
+  /geproton/proton run /astroneer/Astro/Binaries/Win64/AstroServer-Win64-Shipping.exe
+  # touch /astroneer/initialized
+  echo "Init done..."
+fi
+
+
 /geproton/proton run /astroneer/Astro/Binaries/Win64/AstroServer-Win64-Shipping.exe &
 
 echo "GAGI"

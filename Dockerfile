@@ -5,11 +5,12 @@ ENV GE_PROTON_VERSION "9-18"
 ENV STEAMCMD_PATH "/steamcmd"
 ENV STEAM_COMPAT_CLIENT_INSTALL_PATH "/steamcmd"
 ENV STEAM_COMPAT_DATA_PATH "/steamcmd/steamapps/compatdata/728470"
+ENV PROTON_LOG 1
 
 # Add user and create necessary directories
 RUN set -ex; \
   useradd --home-dir /home/steam --create-home steam; \
-  mkdir -p "${STEAM_COMPAT_DATA_PATH}"; \
+  mkdir -p $STEAM_COMPAT_DATA_PATH; \
   mkdir -p /geproton; \
   mkdir -p /astroneer; \
   mkdir -p /backup; \
