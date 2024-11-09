@@ -62,14 +62,12 @@ RUN set -ex; \
 # Download and extract proton
 RUN curl -sqL "https://github.com/GloriousEggroll/proton-ge-custom/releases/download/GE-Proton${GE_PROTON_VERSION}/GE-Proton${GE_PROTON_VERSION}.tar.gz" | tar zxvf - -C "/geproton" --strip-components=1
 
-RUN echo "Hallo"
-
 # Copy files and install node modules
 COPY ./files/ ./
 RUN rm -rf /srv/node_modules
-# RUN set -ex; \
-#  cd /srv; \
-#  npm install
+RUN set -ex; \
+  cd /srv; \
+  npm install
 
 # Adjust permissions to make sure the steam user can execute stuff
 RUN set -ex; \
