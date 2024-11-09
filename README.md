@@ -2,6 +2,8 @@
 
 ## Prerequisites
 
+### Disable Encryption in Client
+
 The current astroneer server implementation uses an encryption algorithm that is not supported by wine's implementation of bcrypt.dll.
 Due to this issue, we have to disable encryption on the server side to make things work.
 
@@ -14,19 +16,25 @@ Locate the Engine.ini file on your file system (usually located under <<USER DIR
 net.AllowEncryption=False
 ```
 
-## 
+### Configure Router / Firewall
+
+Make sure you configured your router to forward the configured port (default 8777) to your server machine.
+
+Also open this port on your firewall if you have one.
+
+There is no general way to do this as it varies depending on the router / firewall used.
 
 ## Configuration
 
 The following configuration values are currently available
 
-| VAR                     | Required | Default Value | Description                                                                                                                   |
-| ----------------------- | -------- | ------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| ASTRO_SERVER_NAME       | Yes      |               | The name or your server.                                                                                                      |
-| ASTRO_SERVER_PORT       | No       | 8777          | Custom server port                                                                                                            |
-| ASTRO_SERVER_PUBLIC_IP  | No       |               | The public ip address of your server. If left empty, https://api.ipify.org/ will be used to determine your current ip address |
-| ASTRO_SERVER_OWNER_NAME | Yes      |               | Name or the server owner (Steam username)                                                                                     |
-| ASTRO_SERVER_PASSWORD   | Yes      |               | Server password                                                                                                               |
+| VAR                     | Required | Default Value | Description                                                                                                                                 |
+| ----------------------- | -------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| ASTRO_SERVER_NAME       | Yes      |               | The name or your server.                                                                                                                    |
+| ASTRO_SERVER_PORT       | No       | 8777          | Custom server port                                                                                                                          |
+| ASTRO_SERVER_PUBLIC_IP  | No       |               | The public ip address of your server. If left empty, https://api.ipify.org/ will be used to determine your current ip address (recommended) |
+| ASTRO_SERVER_OWNER_NAME | Yes      |               | Name or the server owner (Steam username)                                                                                                   |
+| ASTRO_SERVER_PASSWORD   | Yes      |               | Server password                                                                                                                             |
 
 ## Starting the server
 
