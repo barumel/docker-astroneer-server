@@ -29,12 +29,23 @@ bash /steamcmd/steamcmd.sh +quit
 echo "UPDATE ASTRO SERVER"
 bash /steamcmd/steamcmd.sh +runscript /tmp/install.txt
 
+# Check for first run
 if [ ! -f /astroneer/initialized ]; then
   echo "Server seems to run the first time!"
   echo "Start the server once to make sure all config files were created..."
   /geproton/proton run /astroneer/Astro/Binaries/Win64/AstroServer-Win64-Shipping.exe
   touch /astroneer/initialized
   echo "Init done... continue"
+fi
+
+# Check if we have to restore a backup
+if [ -f /backup/restore/SERVER.savegame ]; then
+  echo "Backup to restore found!"
+  echo "Remove current save games and move the backup file to save games"
+  $(date '+%Y-%m-%d %H:%M:%S')
+  rm -f /astroneer/Astro/Saved/SaveGames/*
+  mv /backup/restore/SERVER.savegame /astroneer/Astro/Saved/SaveGames/SERVER$(date '+%Y-%m-%d-%H:%M:%S').savegame
+  echo "Backup restored!"
 fi
 
 node /srv/src/initConfig.js
