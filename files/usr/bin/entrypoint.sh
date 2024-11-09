@@ -30,16 +30,14 @@ echo "UPDATE ASTRO SERVER"
 bash /steamcmd/steamcmd.sh +runscript /tmp/install.txt
 
 if [ ! -f /astroneer/initialized ]; then
-  echo "No init file found. Run the server the first time to init config files and wait until it shuts down..."
+  echo "Server seems to run the first time!"
+  echo "Start the server once to make sure all config files were created..."
   /geproton/proton run /astroneer/Astro/Binaries/Win64/AstroServer-Win64-Shipping.exe
   touch /astroneer/initialized
   echo "Init done... continue"
 fi
 
-node /srv/src/initConfig.js &
+node /srv/src/initConfig.js
 
-/geproton/proton run /astroneer/Astro/Binaries/Win64/AstroServer-Win64-Shipping.exe &
-
-echo "GAGI"
-
-tail -f /dev/null
+echo "Start the server"
+/geproton/proton run /astroneer/Astro/Binaries/Win64/AstroServer-Win64-Shipping.exe
