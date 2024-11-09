@@ -11,7 +11,6 @@ services:
       - "ASTRO_SERVER_NAME=${ASTRO_SERVER_NAME}"
       - "ASTRO_SERVER_PASSWORD=${ASTRO_SERVER_PASSWORD}"
       - "ASTRO_SERVER_OWNER_NAME=${ASTRO_SERVER_OWNER_NAME}"
-      - "TZ=${TZ}"
     ports:
       - 8777:8777/tcp
       - 8777:8777/udp

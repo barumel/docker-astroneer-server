@@ -16,6 +16,13 @@ verify_cpu_mhz() {
     fi
 }
 
+# Run wineboot on startup to make sure the WINEPREFIX directory is not empty.
+# This would normally be done when starting the application the first time
+# but as it required user interaction, the startup process hangs
+echo "RUN WINEBOOT TO ENSURE NECESSARY FILES"
+DISPLAY= wineboot -u
+echo "DONE..."
+
 # Remove the Xvfb lock file if it exists
 echo "REMOVE XVFB LOCK FILE IF IT EXISTS"
 rm -rf /tmp/.X99-lock
@@ -29,8 +36,9 @@ bash /steamcmd/steamcmd.sh +quit
 echo "UPDATE ASTRO SERVER"
 bash /steamcmd/steamcmd.sh +runscript /tmp/install.txt
 
-/geproton/proton run /astroneer/Astro/Binaries/Win64/AstroServer-Win64-Shipping.exe &
+# Start the servier
+echo "RUN THE SERVER"
+node /srv/index.js
 
-echo "GAGI"
 
-tail -f /dev/null
+echo "END OF ENTRYPOINT REACHED... SEEMS THAT THE SERVER DID QUIT UNEXPECTEDLY!"
