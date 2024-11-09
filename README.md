@@ -42,7 +42,8 @@ You can use the provided docker-compose.yml to start the server.
 
 Just create a .env file in the same directory and add the necessary env vars.
 
-```Example
+```Example .env
+# Exampe .env
 ASTRO_SERVER_NAME="My Astro Server"
 ASTRO_SERVER_PASSWORD="Replace_me_with_a_Password!"
 ASTRO_SERVER_OWNER_NAME="Your_Steam_Username"
