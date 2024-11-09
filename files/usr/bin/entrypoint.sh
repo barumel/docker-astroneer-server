@@ -36,7 +36,7 @@ if [ ! -f /astroneer/initialized ]; then
   echo "Init done... continue"
 fi
 
-node ./srv/src/initConfig.js &
+node /srv/src/initConfig.js &
 
 /geproton/proton run /astroneer/Astro/Binaries/Win64/AstroServer-Win64-Shipping.exe &
 
