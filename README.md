@@ -9,7 +9,7 @@ Due to this issue, we have to disable encryption on the server side to make thin
 
 To be able to connect to the server you will have to disable encryption on the client side as well.
 
-Locate the Engine.ini file on your file system (usually located under <<USER DIR>>/AppData/Local/Astro/Saved/Config/WindowsNoEditor) and add the following line to the bottom of the file:
+Locate the Engine.ini file on your file system (usually located under <USER DIR>/AppData/Local/Astro/Saved/Config/WindowsNoEditor) and add the following line to the bottom of the file:
 
 ```
 [SystemSettings]
@@ -42,7 +42,7 @@ You can use the provided docker-compose.yml to start the server.
 
 Just create a .env file in the same directory and add the necessary env vars.
 
-```Example .env
+```Example
 ASTRO_SERVER_NAME="My Astro Server"
 ASTRO_SERVER_PASSWORD="Replace_me_with_a_Password!"
 ASTRO_SERVER_OWNER_NAME="Your_Steam_Username"
