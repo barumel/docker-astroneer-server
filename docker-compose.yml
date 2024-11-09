@@ -17,11 +17,9 @@ services:
     volumes:
      - astroneer:/astroneer
      - steamcmd:/steamcmd
-     - wine:/wine
      - backup:/backup
 
 volumes:
   astroneer:
   steamcmd:
-  wine:
   backup:

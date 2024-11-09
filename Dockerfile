@@ -17,7 +17,6 @@ RUN set -ex; \
   mkdir -p /backup; \
   mkdir -p /backup/daily; \
   mkdir -p /backup/restore; \
-  mkdir -p /wine
 
 # Update and install packages
 RUN set -ex; \
@@ -33,17 +32,7 @@ RUN set -ex; \
   ca-certificates \
   lib32gcc-s1 \
   winbind \
-  curl \
-  gnupg2 \
-  locales \
-  tzdata;
-
-# Setup locale
-# RUN set -ex; \
-#  echo "en_US.UTF-8 UTF-8" > /etc/locale.gen; \
-#  locale-gen en_US.UTF-8; \
-#  dpkg-reconfigure locales; \
-#  /usr/sbin/update-locale LANG=en_US.UTF-8;
+  curl;
 
 # Install nodejs
 RUN set -ex; \
