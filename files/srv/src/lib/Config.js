@@ -94,6 +94,8 @@ function AstroServerConfig() {
     fs.writeFileSync('/astroneer/Astro/Saved/Config/WindowsServer/AstroServerSettings.ini', ini.encode(astro));
 
     console.log(clc.green('SUCCESSFULLY UPDATES ASTRO SERVER CONFIG...'));
+
+    process.exit(0);
   }
 
   return Object.freeze({
