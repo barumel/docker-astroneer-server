@@ -16,7 +16,7 @@ RUN set -ex; \
   mkdir -p /astroneer; \
   mkdir -p /backup; \
   mkdir -p /backup/daily; \
-  mkdir -p /backup/restore; \
+  mkdir -p /backup/restore;
 
 # Update and install packages
 RUN set -ex; \
