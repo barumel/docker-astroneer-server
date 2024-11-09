@@ -5,7 +5,8 @@ ENV GE_PROTON_VERSION "9-18"
 ENV STEAMCMD_PATH "/steamcmd"
 ENV STEAM_COMPAT_CLIENT_INSTALL_PATH "/steamcmd"
 ENV STEAM_COMPAT_DATA_PATH "/steamcmd/steamapps/compatdata/728470"
-ENV PROTON_LOG 1
+ENV PROTON_LOG "1 %command%"
+ENV PROTON_LOG_DIR "/steamcmd"
 
 # Add user and create necessary directories
 RUN set -ex; \
