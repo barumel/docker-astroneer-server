@@ -28,13 +28,17 @@ The following configuration values are currently available
 | ASTRO_SERVER_OWNER_NAME | Yes      |               | Name or the server owner (Steam username)                                                                                     |
 | ASTRO_SERVER_PASSWORD   | Yes      |               | Server password                                                                                                               |
 
-
-
 ## Starting the server
 
 You can use the provided docker-compose.yml to start the server.
 
 Just create a .env file in the same directory and add the necessary env vars.
+
+```Example .env
+ASTRO_SERVER_NAME="My Astro Server"
+ASTRO_SERVER_PASSWORD="Replace_me_with_a_Password!"
+ASTRO_SERVER_OWNER_NAME="Your_Steam_Username"
+```
 
 If you want to import an existing save game, do it like described above.
 
@@ -45,8 +49,6 @@ docker compose up -d
 ```
 
 This may take a few minutes if the server runs the first time as it installs the server software via steamcmd and launches the server to make sure all necessary .ini files were created. 
-
-
 
 ## Using an existing save game
 
@@ -72,8 +74,6 @@ docker compose up -d
 
 The server will check the /tmp dir on the first run and copy the save game to the SaveGames folder.
 
-
-
 ## Backups
 
 Backups are created every 10 minutes under `/backup` (backup volume in docker compose).
@@ -81,8 +81,6 @@ Backups are created every 10 minutes under `/backup` (backup volume in docker co
 These backups are only kept for the current day and are removed by a cleanup job that  periodically runs.
 
 The latest backup of each day gets moved to `/backup/daily` 
-
-
 
 ### Restore a backup
 
