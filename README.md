@@ -40,7 +40,7 @@ ASTRO_SERVER_PASSWORD="Replace_me_with_a_Password!"
 ASTRO_SERVER_OWNER_NAME="Your_Steam_Username"
 ```
 
-If you want to import an existing save game, do it like described above.
+If you want to import an existing save game, do it like described below.
 
 Then run:
 
