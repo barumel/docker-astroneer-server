@@ -40,4 +40,6 @@ fi
 node /srv/src/initConfig.js
 
 echo "Start the server"
-/geproton/proton run /astroneer/Astro/Binaries/Win64/AstroServer-Win64-Shipping.exe
+/geproton/proton run /astroneer/Astro/Binaries/Win64/AstroServer-Win64-Shipping.exe &
+
+node /srv/src/initBackupAndHealtCheck.js

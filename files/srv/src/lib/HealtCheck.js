@@ -13,7 +13,8 @@ function HealthCheck() {
    * In this case, the server creates a new save game file and ignores the existing one.
    * Not sure if there is a better solution to detect that problem but now we are
    * simply going to count the number of files in the SaveGames folder.
-   * As there should only be one save game, multiple files indicate a potential problem with the old one...
+   * As there should only be one save game, multiple files indicate
+   * a potential problem with the old one...
    *
    * @return  void
    */
@@ -22,7 +23,6 @@ function HealthCheck() {
       // It may take a while until the save game was created... Just log and wait or the next run
       if (!fs.existsSync('/astroneer/Astro/Saved/SaveGames')) {
         console.log(clc.yellow(`${moment().format()} UNABLE TO INIT HEALTH CHECK AS THERE IS NO SAVE GAME FILE!`));
-
         return;
       }
 
@@ -31,7 +31,7 @@ function HealthCheck() {
 
       if (count > 1) {
         console.log(clc.red(`${moment().format()} MULTIPLE SAVE GAME FILES DETECTED! THIS INDICATES A BROKEN SAVE GAME...`));
-        return callback();
+        callback();
       }
     }, 20000);
 
