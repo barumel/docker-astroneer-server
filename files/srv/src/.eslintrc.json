@@ -1,0 +1,48 @@
+{
+  "extends": [
+    "eslint:recommended",
+    "plugin:import/recommended",
+    "airbnb"
+  ],
+  "env": {
+    "node": true,
+    "es6": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2020
+  },
+  "rules": {
+    "no-console": "off",
+    "strict": [
+      "error",
+      "never"
+    ],
+    "object-curly-newline": [
+      1,
+      {
+        "ObjectExpression": {
+          "consistent": true
+        },
+        "ObjectPattern": {
+          "multiline": true,
+          "minProperties": 4
+        },
+        "ImportDeclaration": {
+          "consistent": true
+        },
+        "ExportDeclaration": {
+          "multiline": true,
+          "minProperties": 5
+        }
+      }
+    ],
+    "no-unused-vars": 1,
+    "no-param-reassign": 1,
+    "no-undef": "error",
+    "no-undef-init": "error",
+    "comma-dangle": 0,
+    "import/no-useless-path-segments": 1,
+    "import/no-named-as-default-member": 0,
+    "import/no-named-as-default": 0
+  }
+}
