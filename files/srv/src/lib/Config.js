@@ -89,7 +89,7 @@ function AstroServerConfig() {
     setWith(astro, '/Script/Astro.AstroServerSettings.ServerPassword', getEnvVar('ASTRO_SERVER_PASSWORD', 'Well... that was clear'), Object);
     setWith(astro, '/Script/Astro.AstroServerSettings.AutoSaveGameInterval', getEnvVar('ASTRO_SERVER_AUTO_SAVE_INTERVAL', 60), Object);
     setWith(astro, '/Script/Astro.AstroServerSettings.EnableAutoRestart', 'False', Object);
-    setWith(astro, '/Script/Astro.AstroServerSettings.ActiveSaveFileDescriptiveName', 'SERVER', Object);
+    // setWith(astro, '/Script/Astro.AstroServerSettings.ActiveSaveFileDescriptiveName', 'SERVER', Object);
 
     fs.writeFileSync('/astroneer/Astro/Saved/Config/WindowsServer/AstroServerSettings.ini', ini.encode(astro));
 
