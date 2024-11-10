@@ -16,13 +16,6 @@ verify_cpu_mhz() {
     fi
 }
 
-# Run wineboot on startup to make sure the WINEPREFIX directory is not empty.
-# This would normally be done when starting the application the first time
-# but as it required user interaction, the startup process hangs
-echo "RUN WINEBOOT TO ENSURE NECESSARY FILES"
-DISPLAY= wineboot -u
-echo "DONE..."
-
 # Remove the Xvfb lock file if it exists
 echo "REMOVE XVFB LOCK FILE IF IT EXISTS"
 rm -rf /tmp/.X99-lock
@@ -36,9 +29,28 @@ bash /steamcmd/steamcmd.sh +quit
 echo "UPDATE ASTRO SERVER"
 bash /steamcmd/steamcmd.sh +runscript /tmp/install.txt
 
-# Start the servier
-echo "RUN THE SERVER"
-node /srv/index.js
+# Check for first run
+if [ ! -f /astroneer/initialized ]; then
+  echo "Server seems to run the first time!"
+  echo "Start the server once to make sure all config files were created..."
+  /geproton/proton run /astroneer/Astro/Binaries/Win64/AstroServer-Win64-Shipping.exe
+  touch /astroneer/initialized
+  echo "Init done... continue"
+fi
 
+# Check if we have to restore a backup
+if [ -f /backup/restore/SERVER.savegame ]; then
+  echo "Backup to restore found!"
+  echo "Remove current save games and move the backup file to save games"
+  $(date '+%Y-%m-%d %H:%M:%S')
+  rm -f /astroneer/Astro/Saved/SaveGames/*
+  mv /backup/restore/SERVER.savegame /astroneer/Astro/Saved/SaveGames/SERVER$(date '+%Y-%m-%d-%H:%M:%S').savegame
+  echo "Backup restored!"
+fi
 
-echo "END OF ENTRYPOINT REACHED... SEEMS THAT THE SERVER DID QUIT UNEXPECTEDLY!"
+node /srv/src/initConfig.js
+
+echo "Start the server"
+/geproton/proton run /astroneer/Astro/Binaries/Win64/AstroServer-Win64-Shipping.exe &
+
+node /srv/src/initBackupAndHealtCheck.js
