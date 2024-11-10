@@ -44,7 +44,7 @@ if [ -f /backup/restore/SERVER.savegame ]; then
   echo "Remove current save games and move the backup file to save games"
   $(date '+%Y-%m-%d %H:%M:%S')
   rm -f /astroneer/Astro/Saved/SaveGames/*
-  mv /backup/restore/SERVER.savegame /astroneer/Astro/Saved/SaveGames/SERVER$(date '+%Y-%m-%d-%H:%M:%S').savegame
+  mv /backup/restore/SERVER.savegame /astroneer/Astro/Saved/SaveGames/SAVE_1\$$(date '+%Y-%m-%d-%H:%M:%S').savegame
   echo "Backup restored!"
 fi
 
