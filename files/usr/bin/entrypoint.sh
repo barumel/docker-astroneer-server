@@ -40,9 +40,16 @@ if [ ! -f /astroneer/initialized ]; then
   echo "Init done... continue"
 fi
 
+ls -al /backup/restore
+
 # Check if we have to restore a backup
 if [ ! -n "$(find "/backup/restore" -prune -empty)" ]; then
+  echo "E1: Found files in /backup/restore!"
   node /srv/src/restore.js
+fi
+
+if [ -n "$(find "/backup/restore" -prune -empty)" ]; then
+  echo "E2: Found files in /backup/restore!"
 fi
 
 node /srv/src/initConfig.js

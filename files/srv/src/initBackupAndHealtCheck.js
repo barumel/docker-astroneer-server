@@ -1,6 +1,7 @@
 const fs = require('fs-extra');
 const clc = require('cli-color');
 const { chain } = require('lodash');
+const moment = require('moment');
 
 const Backup = require('./lib/Backup');
 const HealthCheck = require('./lib/HealtCheck');
@@ -23,13 +24,14 @@ const HealthCheck = require('./lib/HealtCheck');
     chain(backups)
       .compact()
       .forEach((b) => {
-        console.log(clc.blue(`Latest backup of ${b.name} is ${b.timestamp}. Copy it to /backup/restore`));
+        console.log(clc.blue(`${moment().format()}: Latest backup of ${b.name} is ${b.timestamp}. Copy it to /backup/restore`));
 
         fs.copySync(b.path, `/backup/restore/${b.name}`);
       })
       .value();
 
-    console.log(clc.blue('Exit process... Be aware that you manually have to restart the container if it is not started with "--restart always"'));
+    console.log(clc.blue(`${moment().format()}: Exit process...`));
+    console.log(clc.blue(`${moment().format()}: Be aware that you manually have to restart the container if it is not started with "--restart always"`))
 
     process.exit(1);
   }
