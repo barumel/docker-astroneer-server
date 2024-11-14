@@ -32,7 +32,16 @@ RUN set -ex; \
   ca-certificates \
   lib32gcc-s1 \
   winbind \
-  curl;
+  curl \
+  locales \
+  tzdata;
+
+# Update locales
+RUN set -ex; \
+  echo "en_US.UTF-8 UTF-8" > /etc/locale.gen; \
+  locale-gen en_US.UTF-8; \
+  dpkg-reconfigure locales; \
+  /usr/sbin/update-locale LANG=en_US.UTF-8;
 
 # Install nodejs
 RUN set -ex; \
