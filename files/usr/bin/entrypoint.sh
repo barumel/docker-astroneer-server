@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # https://github.com/lloesche/valheim-server-docker/blob/main/valheim-updater#L140
 # This works around the `Unable to determine CPU Frequency. Try defining CPU_MHZ.` steamcmd issue (#184).
@@ -54,6 +55,7 @@ fi
 
 node /srv/src/initConfig.js
 
-/geproton/proton run /astroneer/Astro/Binaries/Win64/AstroServer-Win64-Shipping.exe && node /srv/src/initBackupAndHealtCheck.js
+/geproton/proton run /astroneer/Astro/Binaries/Win64/AstroServer-Win64-Shipping.exe &
+node /srv/src/initBackupAndHealtCheck.js
 
 echo "D'oh"
