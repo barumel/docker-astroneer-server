@@ -1,6 +1,7 @@
 const fs = require('fs-extra');
-const { isNil } = require('lodash');
 const clc = require('cli-color');
+const { chain } = require('lodash');
+const moment = require('moment');
 
 const Backup = require('./lib/Backup');
 const HealthCheck = require('./lib/HealtCheck');
@@ -14,21 +15,23 @@ const HealthCheck = require('./lib/HealtCheck');
    * Copy the latest backup to /backup/restore and exit the process.
    * This should restart the container with the copied backup
    *
+   * @param {Array} broken List of broken save game base names (e.G. SAVE_1, SAVE_2...)
+   *
    * @return  {[type]}  [return description]
    */
-  function onHealthCheckFailed() {
-    const latest = backup.getLatest();
+  function onHealthCheckFailed(broken = []) {
+    chain(broken)
+      .map((b) => backup.getLatest(b))
+      .compact()
+      .forEach((b) => {
+        console.log(clc.blue(`${moment().format()}: Latest backup of ${b.name} is ${b.timestamp}. Copy it to /backup/restore`));
 
-    if (isNil(latest)) {
-      console.log(clc.red('NO LATEST BACKUP FOUND!'));
-      return;
-    }
+        fs.copySync(b.path, `/backup/restore/${b.name}`);
+      })
+      .value();
 
-    console.log(clc.blue(`LATEST BACKUP IS ${latest.timestamp}. COPY TO /backup/restore`));
-
-    fs.copySync(latest.path, '/backup/restore/SERVER.savegame');
-
-    console.log(clc.blue('EXIT PROCESS TO TRIGGER A RESTART OF THE CONTAINER'));
+    console.log(clc.blue(`${moment().format()}: Exit process...`));
+    console.log(clc.blue(`${moment().format()}: Be aware that you manually have to restart the container if it is not started with "--restart always"`))
 
     process.exit(1);
   }

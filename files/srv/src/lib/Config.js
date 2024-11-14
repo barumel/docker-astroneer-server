@@ -3,6 +3,7 @@ const fs = require('fs-extra');
 const ini = require('ini');
 const { get, setWith, isNil } = require('lodash');
 const axios = require('axios');
+const moment = require('moment');
 
 function AstroServerConfig() {
   /**
@@ -38,7 +39,7 @@ function AstroServerConfig() {
       }
     });
 
-    console.log('PUBLIC IP IS: ', data);
+    console.log(clc.blue(`${moment().format()}: PUBLIC IP IS ${data}`));
 
     return data;
   }
@@ -55,7 +56,7 @@ function AstroServerConfig() {
       const value = getEnvVar(key);
 
       if (isNil(value)) {
-        throw new Error(`ENVIRONMENT VARIABLE ${key} IS REQUIRED BUT NOT SET!`);
+        throw new Error(`${moment().format()}: Environment variable ${key} is required but not set!`);
       }
     });
   }
@@ -66,7 +67,7 @@ function AstroServerConfig() {
    * @return  void
    */
   async function update() {
-    console.log(clc.green('GOING TO UPDATE THE SERVER CONFIGURATION BASED ON CURRENT ENV VARIABLES...'));
+    console.log(clc.green(`${moment().format()}: Going to update config files with current env variables...`));
 
     validate();
 
@@ -93,7 +94,7 @@ function AstroServerConfig() {
 
     fs.writeFileSync('/astroneer/Astro/Saved/Config/WindowsServer/AstroServerSettings.ini', ini.encode(astro));
 
-    console.log(clc.green('SUCCESSFULLY UPDATED ASTRO SERVER CONFIG...'));
+    console.log(clc.green(`${moment().format()}: Successfully updated config files!`));
   }
 
   return Object.freeze({
