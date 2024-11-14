@@ -42,15 +42,8 @@ if [ ! -f /astroneer/initialized ]; then
 fi
 
 # Check if we have to restore a backup
-if [ -f /backup/restore/SERVER.savegame ]; then
-  echo "Backup to restore found!"
-  echo "Remove current save games and move the backup file to save games"
-
-  $(date '+%Y-%m-%d %H:%M:%S')
-  rm -f /astroneer/Astro/Saved/SaveGames/*
-  mv /backup/restore/SERVER.savegame /astroneer/Astro/Saved/SaveGames/SAVE_1\$$(date '+%Y-%m-%d-%H:%M:%S').savegame
-
-  echo "Backup restored!"
+if [ ! -n "$(find "/backup/restore" -prune -empty)" ]; then
+  node /srv/src/restore.js
 fi
 
 node /srv/src/initConfig.js
