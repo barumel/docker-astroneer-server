@@ -23,7 +23,7 @@ function HealthCheck() {
     intervalID = setInterval(() => {
       // It may take a while until the save game was created... Just log and wait or the next run
       if (!fs.existsSync('/astroneer/Astro/Saved/SaveGames')) {
-        console.log(clc.yellow(`${moment().format()} Unable to init health check as there are no save game files!`));
+        console.log(clc.yellow(`${moment().format()}: Unable to init health check as there are no save game files!`));
         return;
       }
 
@@ -42,7 +42,7 @@ function HealthCheck() {
       }
     }, 20000);
 
-    console.log(clc.green('Health check is now running'));
+    console.log(clc.green(`${moment().format()}: Health check is now running`));
   }
 
   /**
@@ -52,7 +52,7 @@ function HealthCheck() {
    */
   function stop() {
     clearInterval(intervalID);
-    console.log(clc.green('Health check stopped!'));
+    console.log(clc.green(`${moment().format()}: Health check stopped!`));
   }
 
   /**

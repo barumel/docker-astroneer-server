@@ -1,5 +1,4 @@
 const fs = require('fs-extra');
-const { isNil } = require('lodash');
 const clc = require('cli-color');
 
 const Backup = require('./lib/Backup');

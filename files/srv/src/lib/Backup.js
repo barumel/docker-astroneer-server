@@ -15,7 +15,7 @@ function Backup() {
    * @return  {[type]}  [return description]
    */
   function load() {
-    console.log(clc.blue('Loading current backups from "/backup" and "/backup/daily"'));
+    console.log(clc.blue(`${moment().format()}: Loading current backups from "/backup" and "/backup/daily"`));
 
     const daily = fs
       .readdirSync('/backup/daily')
@@ -74,13 +74,13 @@ function Backup() {
       backups = chain(files)
         .filter((file) => path.extname(file) === '.savegame')
         .reduce((result, file) => {
-          console.log(clc.blue(`Going to create incremental backup of file ${file}...`));
+          console.log(clc.blue(`${moment().format()}: Going to create incremental backup of file ${file}...`));
 
           const name = first(file.split('$'));
           const target = `/backup/${name}$${timestamp}`;
           fs.copySync(`/astroneer/Astro/Saved/SaveGames/${file}`, target);
 
-          console.log(clc.green(`Incremental backup of file ${file} created!`));
+          console.log(clc.green(`${moment().format()}: Incremental backup of file ${file} created!`));
 
           return [...result, {
             name,
@@ -96,7 +96,7 @@ function Backup() {
     // eslint-disable-next-line no-use-before-define
     cleanupIntervalID = setInterval(cleanup, (60 * 60 * 1000));
 
-    console.log(clc.green('Backup is now running'));
+    console.log(clc.green(`${moment().format()}: Backup is now running`));
   }
 
   /**
@@ -107,7 +107,7 @@ function Backup() {
   function stop() {
     clearInterval(backupIntervalID);
     clearInterval(cleanupIntervalID);
-    console.log(clc.green('Backup stopped!'));
+    console.log(clc.green(`${moment().format()}: Backup stopped!`));
   }
 
   /**
@@ -118,7 +118,7 @@ function Backup() {
    */
   function cleanup() {
     console.log(clc.blue('--------------Cleanup Backups--------------'));
-    console.log(clc.blue('Running periodic cleanup...'));
+    console.log(clc.blue(`${moment().format()}: Running periodic cleanup...`));
 
     const items = load();
     const files = chain(items)
@@ -149,13 +149,13 @@ function Backup() {
       }, {})
       .value();
 
-    console.log(clc.blue('The following backups will be copied to the daily folder:'));
+    console.log(clc.blue(`${moment().format()}: The following backups will be copied to the daily folder:`));
     console.log(get(files, 'move', []));
 
     // Copy daily files
     get(files, 'move', []).forEach((b) => fs.copySync(b.path, `/backup/daily/${b.timestamp}`));
 
-    console.log(clc.blue('The following backups will be removed:'));
+    console.log(clc.blue(`${moment().format()}: The following backups will be removed:`));
     console.log(get(files, 'remove', []));
 
     // Remove unused files
@@ -164,7 +164,7 @@ function Backup() {
     // Reload backups
     backups = load();
 
-    console.log(clc.green('Cleanup successful!'));
+    console.log(clc.green(`${moment().format()}: Cleanup successful!`));
   }
 
   /**
