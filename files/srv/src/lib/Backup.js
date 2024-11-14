@@ -153,7 +153,7 @@ function Backup() {
     console.log(get(files, 'move', []));
 
     // Copy daily files
-    get(files, 'move', []).forEach((b) => fs.copySync(b.path, `/backup/daily/${b.timestamp}`));
+    get(files, 'move', []).forEach((b) => fs.copySync(b.path, `/backup/daily/${b.name}$${b.timestamp}`));
 
     console.log(clc.blue(`${moment().format()}: The following backups will be removed:`));
     console.log(get(files, 'remove', []));

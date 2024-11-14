@@ -25,7 +25,7 @@ const HealthCheck = require('./lib/HealtCheck');
       .forEach((b) => {
         console.log(clc.blue(`Latest backup of ${b.name} is ${b.timestamp}. Copy it to /backup/restore`));
 
-        fs.copySync(b.path, `/backup/restore/${b.name}.savegame`);
+        fs.copySync(b.path, `/backup/restore/${b.name}`);
       })
       .value();
 

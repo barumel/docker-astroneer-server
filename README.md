@@ -42,7 +42,7 @@ You can use the provided docker-compose.yml to start the server.
 
 Just create a .env file in the same directory and add the necessary env vars.
 
-```Example .env
+```Example
 # Exampe .env
 ASTRO_SERVER_NAME="My Astro Server"
 ASTRO_SERVER_PASSWORD="Replace_me_with_a_Password!"
@@ -57,7 +57,7 @@ Then run:
 docker compose up -d
 ```
 
-This may take a few minutes if the server runs the first time as it installs the server software via steamcmd and launches the server to make sure all necessary .ini files were created. 
+This may take a few minutes if the server runs the first time as it installs the server software via steamcmd and launches the server to make sure all necessary .ini files were created.
 
 ## Using an existing save game
 
@@ -68,7 +68,7 @@ You can import an existing save game to the server via the following commands.
 docker compose down
 
 # Create the container but do not start it
-docker componse create 
+docker componse create
 
 # Get the container id via docker ps
 docker ps -a
@@ -89,44 +89,27 @@ Backups are created every 10 minutes under `/backup` (backup volume in docker co
 
 These backups are only kept for the current day and are removed by a cleanup job that  periodically runs.
 
-The latest backup of each day gets moved to `/backup/daily` 
+The latest backup of each day gets moved to `/backup/daily`
 
 ### Restore a backup
 
-#### restore-backup.sh
-
-If you use the provided docker-compose.yml you can use the restore-backup.sh script provided in this repo.
-
-Be aware that the container must be running when using the script.
-
-```
-# Get the container id
-docker ps
-
-# List all backups and copy the name of the backup you want to restore (without /daily)
-bash list-backups.sh -c <<CONTAINER_ID>>
-
-# Run the backup script
-bash restore-backup.sh -c <<CONTAINER_ID>> -b <<BACKUP_NAME>>
-```
-
 #### Manually restore
 
-```
+```shell
 # Copy the backup to the local dir
-docker cp <<CONTAINER_ID>>:/backup/<<BACKUP FILE PATH>> ./SERVER.savegame 
+docker cp <<CONTAINER_ID>>:/backup/<<BACKUP FILE PATH>> ./SERVER.savegame
 
 # Stop the server
-docker compose stop 
+docker compose stop
 
 # Create but don't start the container
-docker-compose create 
+docker-compose create
 
 # Get the container id
-docker ps -a 
+docker ps -a
 
 # Copy the backup file
-docker cp SERVER.savegame <<CONTAINER_ID>>:/backup/restore/SERVER.savegame 
+docker cp SERVER.savegame <<CONTAINER_ID>>:/backup/restore/SERVER.savegame
 
 # Start the server
 docker compose up -d
