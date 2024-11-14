@@ -20,8 +20,8 @@ const HealthCheck = require('./lib/HealtCheck');
    * @return  {[type]}  [return description]
    */
   function onHealthCheckFailed(broken = []) {
-    const backups = broken.map((b) => backup.getLatest(b));
-    chain(backups)
+    chain(broken)
+      .map((b) => backup.getLatest(b))
       .compact()
       .forEach((b) => {
         console.log(clc.blue(`${moment().format()}: Latest backup of ${b.name} is ${b.timestamp}. Copy it to /backup/restore`));
