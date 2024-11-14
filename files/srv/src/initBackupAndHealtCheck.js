@@ -1,5 +1,6 @@
 const fs = require('fs-extra');
 const clc = require('cli-color');
+const { chain } = require('lodash');
 
 const Backup = require('./lib/Backup');
 const HealthCheck = require('./lib/HealtCheck');
@@ -19,11 +20,14 @@ const HealthCheck = require('./lib/HealtCheck');
    */
   function onHealthCheckFailed(broken = []) {
     const backups = broken.map((b) => backup.getLatest(b));
-    backups.forEach((b) => {
-      console.log(clc.blue(`Latest backup of ${b.name} is ${b.timestamp}. Copy it to /backup/restore`));
+    chain(backups)
+      .compact()
+      .forEach((b) => {
+        console.log(clc.blue(`Latest backup of ${b.name} is ${b.timestamp}. Copy it to /backup/restore`));
 
-      fs.copySync(b.path, `/backup/restore/${b.name}.savegame`);
-    });
+        fs.copySync(b.path, `/backup/restore/${b.name}.savegame`);
+      })
+      .value();
 
     console.log(clc.blue('Exit process and restart server...'));
 
