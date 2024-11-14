@@ -37,6 +37,7 @@ if [ ! -f /astroneer/initialized ]; then
 
   /geproton/proton run /astroneer/Astro/Binaries/Win64/AstroServer-Win64-Shipping.exe
   touch /astroneer/initialized
+  mkdir -p /astroneer/Astro/Saved/SaveGames
 
   echo "Init done... continue"
 fi
