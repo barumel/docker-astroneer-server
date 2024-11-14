@@ -90,12 +90,11 @@ function Backup() {
           }];
         }, backups)
         .value();
-    }, 600000);
+    }, 60000);
 
     // Run cleanup every hour
     // eslint-disable-next-line no-use-before-define
-    // cleanupIntervalID = setInterval(cleanup, (60 * 1000 * 10));
-    cleanupIntervalID = setInterval(cleanup, (60 * 1000));
+    cleanupIntervalID = setInterval(cleanup, (60 * 60 * 1000));
 
     console.log(clc.green(`${moment().format()}: Backup is now running`));
   }

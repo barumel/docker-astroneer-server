@@ -54,7 +54,6 @@ fi
 
 node /srv/src/initConfig.js
 
-/geproton/proton run /astroneer/Astro/Binaries/Win64/AstroServer-Win64-Shipping.exe &
-node /srv/src/initBackupAndHealtCheck.js
+/geproton/proton run /astroneer/Astro/Binaries/Win64/AstroServer-Win64-Shipping.exe && node /srv/src/initBackupAndHealtCheck.js
 
 echo "D'oh"
