@@ -29,7 +29,7 @@ function HealthCheck() {
 
       const files = fs.readdirSync('/astroneer/Astro/Saved/SaveGames');
       const broken = chain(files)
-        .filter((file) => !fs.lstatSync(`/backup/daily/${file}`).isDirectory())
+        .filter((file) => !fs.lstatSync(`/astroneer/Astro/Saved/SaveGames/${file}`).isDirectory())
         .filter((file) => path.extname(file) === '.savegame')
         .groupBy((file) => first(file.split('$')))
         .pickBy((f) => size(f) > 1)
