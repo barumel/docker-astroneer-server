@@ -60,7 +60,7 @@ function Backup() {
    * @return  void
    */
   function init() {
-    console.log(clc.blue('Init backup...'));
+    console.log(clc.blue(`${moment().format()}: Init backup...`));
 
     fs.ensureDirSync('/backup/daily');
     fs.ensureDirSync('/backup/restore');

@@ -39,7 +39,7 @@ function AstroServerConfig() {
       }
     });
 
-    console.log('PUBLIC IP IS: ', data);
+    console.log(`${moment().format}: PUBLIC IP IS ${data}`);
 
     return data;
   }

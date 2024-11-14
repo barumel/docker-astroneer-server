@@ -38,6 +38,8 @@ if [ ! -f /astroneer/initialized ]; then
   touch /astroneer/initialized
   mkdir -p /astroneer/Astro/Saved/SaveGames && touch /astroneer/Astro/Saved/SaveGames/SAVE_1\$$(date '+%Y-%m-%d-%H:%M:%S').savegame
 
+  ls -al /astroneer/Astro/Saved/SaveGames
+
   echo "Init done... continue"
 fi
 
@@ -47,8 +49,6 @@ if [ ! -n "$(find "/backup/restore" -prune -empty)" ]; then
 fi
 
 node /srv/src/initConfig.js
-
-echo "Start the server"
 
 /geproton/proton run /astroneer/Astro/Binaries/Win64/AstroServer-Win64-Shipping.exe &
 node /srv/src/initBackupAndHealtCheck.js
