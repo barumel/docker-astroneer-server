@@ -29,7 +29,7 @@ const HealthCheck = require('./lib/HealtCheck');
       })
       .value();
 
-    console.log(clc.blue('Exit process and restart server...'));
+    console.log(clc.blue('Exit process... Be aware that you manually have to restart the container if it is not started with "--restart always"'));
 
     process.exit(1);
   }
