@@ -90,7 +90,7 @@ function Backup() {
           }];
         }, backups)
         .value();
-    }, 60000);
+    }, 600000);
 
     // Run cleanup every hour
     // eslint-disable-next-line no-use-before-define

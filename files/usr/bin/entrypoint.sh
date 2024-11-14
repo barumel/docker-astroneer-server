@@ -50,10 +50,6 @@ if [ ! -n "$(find "/backup/restore" -prune -empty)" ]; then
   node /srv/src/restore.js
 fi
 
-if [ -n "$(find "/backup/restore" -prune -empty)" ]; then
-  echo "E2: Found files in /backup/restore!"
-fi
-
 node /srv/src/initConfig.js
 
 /geproton/proton run /astroneer/Astro/Binaries/Win64/AstroServer-Win64-Shipping.exe &
