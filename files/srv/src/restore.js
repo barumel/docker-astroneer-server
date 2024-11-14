@@ -2,6 +2,7 @@ const fs = require('fs-extra');
 const { chain } = require('lodash');
 const moment = require('moment');
 const clc = require('cli-color');
+const { globSync } = require('glob');
 
 (async function restore() {
   console.log(clc.yellow(`${moment().format()}: Backup(s) to restore found!`));
@@ -19,7 +20,8 @@ const clc = require('cli-color');
       console.log(clc.blue(`${moment().format()}: Remove save games starting with ${name} and copy backup to /astroneer/Astro/Saved/SaveGames/`));
 
       const target = `/astroneer/Astro/Saved/SaveGames/${name}$${moment().format('YYYY.MM.DD-HH.mm.ss')}.savegame`;
-      fs.removeSync(`/astroneer/Astro/Saved/SaveGames/${name}*.savegame`);
+      const savegames = globSync(`/astroneer/Astro/Saved/SaveGames/${name}*`);
+      savegames.forEach((s) => fs.removeSync(s));
       fs.moveSync(`/backup/restore/${file}`, target);
 
       console.log(clc.green(`${moment().format()}: Current save game with name ${name}* removed...`));
