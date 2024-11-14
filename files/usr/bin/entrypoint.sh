@@ -33,8 +33,11 @@ bash /steamcmd/steamcmd.sh +runscript /tmp/install.txt
 if [ ! -f /astroneer/initialized ]; then
   echo "Server seems to run the first time!"
   echo "Start the server once to make sure all config files were created..."
+
   /geproton/proton run /astroneer/Astro/Binaries/Win64/AstroServer-Win64-Shipping.exe
   touch /astroneer/initialized
+  touch SAVE_1\$$(date '+%Y-%m-%d-%H:%M:%S').savegame
+
   echo "Init done... continue"
 fi
 
@@ -42,15 +45,17 @@ fi
 if [ -f /backup/restore/SERVER.savegame ]; then
   echo "Backup to restore found!"
   echo "Remove current save games and move the backup file to save games"
+
   $(date '+%Y-%m-%d %H:%M:%S')
   rm -f /astroneer/Astro/Saved/SaveGames/*
   mv /backup/restore/SERVER.savegame /astroneer/Astro/Saved/SaveGames/SAVE_1\$$(date '+%Y-%m-%d-%H:%M:%S').savegame
+
   echo "Backup restored!"
 fi
 
 node /srv/src/initConfig.js
 
 echo "Start the server"
-/geproton/proton run /astroneer/Astro/Binaries/Win64/AstroServer-Win64-Shipping.exe &
 
+/geproton/proton run /astroneer/Astro/Binaries/Win64/AstroServer-Win64-Shipping.exe &
 node /srv/src/initBackupAndHealtCheck.js

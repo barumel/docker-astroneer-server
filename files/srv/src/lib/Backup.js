@@ -15,14 +15,15 @@ function Backup() {
    * @return  {[type]}  [return description]
    */
   function load() {
-    console.log(clc.blue('LOADING CURRENT BACKUPS FROM /backup AND /backup/daily'));
+    console.log(clc.blue('Loading current backups from "/backup" and "/backup/daily"'));
 
     const daily = fs
       .readdirSync('/backup/daily')
+      .filter((file) => !fs.lstatSync(`/backup/daily/${file}`).isDirectory())
       .map((f) => {
         const parts = f.split('$');
         const name = first(parts);
-        const timestamp = get(parts, 1, '').replace('.savegame');
+        const timestamp = last(parts);
 
         return {
           name,
@@ -38,7 +39,7 @@ function Backup() {
       .map((f) => {
         const parts = f.split('$');
         const name = first(parts);
-        const timestamp = get(parts, 1, '').replace('.savegame');
+        const timestamp = last(parts);
 
         return {
           name,
@@ -75,13 +76,15 @@ function Backup() {
         .reduce((result, file) => {
           console.log(clc.blue(`Going to create incremental backup of file ${file}...`));
 
-          fs.copySync(`/astroneer/Astro/Saved/SaveGames/${file}`, `/backup/${file}`);
+          const name = first(file.split('$'));
+          const target = `/backup/${name}$${timestamp}`;
+          fs.copySync(`/astroneer/Astro/Saved/SaveGames/${file}`, target);
 
           console.log(clc.green(`Incremental backup of file ${file} created!`));
 
           return [...result, {
-            name: first(file.split('$')),
-            path: `/backup/${file}`,
+            name,
+            path: target,
             timestamp,
             type: 'incremental'
           }];
@@ -114,7 +117,7 @@ function Backup() {
    * @return  void
    */
   function cleanup() {
-    console.log(clc.blue('--------------Cleanup backups--------------'));
+    console.log(clc.blue('--------------Cleanup Backups--------------'));
     console.log(clc.blue('Running periodic cleanup...'));
 
     const items = load();
@@ -174,12 +177,10 @@ function Backup() {
   function getLatest(name) {
     backups = load();
 
-    chain(backups)
+    return chain(backups)
       .filter((backup) => backup.name === name)
       .last()
       .value();
-
-    return last(backups);
   }
 
   return Object.freeze({

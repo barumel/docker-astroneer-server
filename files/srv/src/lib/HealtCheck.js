@@ -1,7 +1,8 @@
 const fs = require('fs-extra');
-const { get, noop } = require('lodash');
+const { chain, noop, first, size } = require('lodash');
 const clc = require('cli-color');
 const moment = require('moment');
+const path = require('path');
 
 function HealthCheck() {
   let intervalID;
@@ -22,20 +23,26 @@ function HealthCheck() {
     intervalID = setInterval(() => {
       // It may take a while until the save game was created... Just log and wait or the next run
       if (!fs.existsSync('/astroneer/Astro/Saved/SaveGames')) {
-        console.log(clc.yellow(`${moment().format()} UNABLE TO INIT HEALTH CHECK AS THERE IS NO SAVE GAME FILE!`));
+        console.log(clc.yellow(`${moment().format()} Unable to init health check as there are no save game files!`));
         return;
       }
 
       const files = fs.readdirSync('/astroneer/Astro/Saved/SaveGames');
-      const count = get(files, 'length', 0);
+      const broken = chain(files)
+        .filter((file) => !fs.lstatSync(`/backup/daily/${file}`).isDirectory())
+        .filter((file) => path.extname(file) === '.savegame')
+        .groupBy((file) => first(file.split('$')))
+        .pickBy((f) => size(f) > 1)
+        .keys()
+        .value();
 
-      if (count > 1) {
-        console.log(clc.red(`${moment().format()} MULTIPLE SAVE GAME FILES DETECTED! THIS INDICATES A BROKEN SAVE GAME...`));
-        callback();
+      if (size(broken) > 0) {
+        console.log(clc.red(`${moment().format()} Multiple save game files with the same name detected (${broken.join(', ')})! This indicates a broken save game...`));
+        callback(broken);
       }
     }, 20000);
 
-    console.log(clc.green('HEALTH CHECK IS NOW RUNNING'));
+    console.log(clc.green('Health check is now running'));
   }
 
   /**
@@ -45,7 +52,7 @@ function HealthCheck() {
    */
   function stop() {
     clearInterval(intervalID);
-    console.log(clc.green('HEALTH CHECK STOPPED!'));
+    console.log(clc.green('Health check stopped!'));
   }
 
   /**
