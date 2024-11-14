@@ -74,7 +74,8 @@ docker componse create
 docker ps -a
 
 # Copy the save game to the container's /backup/restore dir
-docker cp MY_SAVE_GAME.savegame <<CONTAINER ID>>:/backup/restore/SERVER.savegame
+# This will overwrite the automatically created SAVE_1 file. If you want to keep the current save game, make sure you choose a name that does not exist in the SaveGames folder
+docker cp MY_SAVE_GAME.savegame <<CONTAINER ID>>:/backup/restore/SAVE_1
 
 
 # Start the server
@@ -97,7 +98,7 @@ The latest backup of each day gets moved to `/backup/daily`
 
 ```shell
 # Copy the backup to the local dir
-docker cp <<CONTAINER_ID>>:/backup/<<BACKUP FILE PATH>> ./SERVER.savegame
+docker cp <<CONTAINER_ID>>:/backup/<<BACKUP FILE PATH>> ./SAVE_1.savegame
 
 # Stop the server
 docker compose stop
@@ -109,7 +110,8 @@ docker-compose create
 docker ps -a
 
 # Copy the backup file
-docker cp SERVER.savegame <<CONTAINER_ID>>:/backup/restore/SERVER.savegame
+# Adjust the file name to your current active save game name (if you did not create a new save game via UI the default is SAVE_1)
+docker cp SAVE_1.savegame <<CONTAINER_ID>>:/backup/restore/SAVE_1
 
 # Start the server
 docker compose up -d
