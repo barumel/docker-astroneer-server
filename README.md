@@ -25,6 +25,12 @@ echo [SystemSettings] >> "%LocalAppData%\Astro\Saved\Config\WindowsNoEditor\Engi
 echo net.AllowEncryption=False >> "%LocalAppData%\Astro\Saved\Config\WindowsNoEditor\Engine.ini"
 ```
 
+Or, you can use the provided .bat file to modify the client config file
+
+```bash
+clientNetDisableEncryption.bat
+```
+
 ### Configure Router / Firewall
 
 Make sure you configured your router to forward the configured port (default 8777) to your server machine.
