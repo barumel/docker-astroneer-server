@@ -11,9 +11,18 @@ To be able to connect to the server you will have to disable encryption on the c
 
 Locate the Engine.ini file on your file system (usually located under `<<User Home>>/AppData/Local/Astro/Saved/Config/WindowsNoEditor)` and add the following line to the bottom of the file:
 
+> win + r %LocalAppData%\Astro\Saved\Config\WindowsNoEditor
+
 ```
 [SystemSettings]
 net.AllowEncryption=False
+```
+
+You can do this the terminal directly:
+
+```bash
+echo [SystemSettings] >> "%LocalAppData%\Astro\Saved\Config\WindowsNoEditor\Engine.ini"
+echo net.AllowEncryption=False >> "%LocalAppData%\Astro\Saved\Config\WindowsNoEditor\Engine.ini"
 ```
 
 ### Configure Router / Firewall
@@ -104,7 +113,7 @@ docker cp <<CONTAINER_ID>>:/backup/<<BACKUP FILE PATH>> ./SAVE_1.savegame
 docker compose stop
 
 # Create but don't start the container
-docker-compose create
+docker compose create
 
 # Get the container id
 docker ps -a
