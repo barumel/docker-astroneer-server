@@ -11,9 +11,24 @@ To be able to connect to the server you will have to disable encryption on the c
 
 Locate the Engine.ini file on your file system (usually located under `<<User Home>>/AppData/Local/Astro/Saved/Config/WindowsNoEditor)` and add the following line to the bottom of the file:
 
+> win + r %LocalAppData%\Astro\Saved\Config\WindowsNoEditor
+
 ```
 [SystemSettings]
 net.AllowEncryption=False
+```
+
+You can do this the terminal directly:
+
+```bash
+echo [SystemSettings] >> "%LocalAppData%\Astro\Saved\Config\WindowsNoEditor\Engine.ini"
+echo net.AllowEncryption=False >> "%LocalAppData%\Astro\Saved\Config\WindowsNoEditor\Engine.ini"
+```
+
+Or, you can use the provided .bat file to modify the client config file
+
+```bash
+clientNetDisableEncryption.bat
 ```
 
 ### Configure Router / Firewall
@@ -74,7 +89,8 @@ docker componse create
 docker ps -a
 
 # Copy the save game to the container's /backup/restore dir
-docker cp MY_SAVE_GAME.savegame <<CONTAINER ID>>:/backup/restore/SERVER.savegame
+# This will overwrite the automatically created SAVE_1 file. If you want to keep the current save game, make sure you choose a name that does not exist in the SaveGames folder
+docker cp MY_SAVE_GAME.savegame <<CONTAINER ID>>:/backup/restore/SAVE_1
 
 
 # Start the server
@@ -97,19 +113,20 @@ The latest backup of each day gets moved to `/backup/daily`
 
 ```shell
 # Copy the backup to the local dir
-docker cp <<CONTAINER_ID>>:/backup/<<BACKUP FILE PATH>> ./SERVER.savegame
+docker cp <<CONTAINER_ID>>:/backup/<<BACKUP FILE PATH>> ./SAVE_1.savegame
 
 # Stop the server
 docker compose stop
 
 # Create but don't start the container
-docker-compose create
+docker compose create
 
 # Get the container id
 docker ps -a
 
 # Copy the backup file
-docker cp SERVER.savegame <<CONTAINER_ID>>:/backup/restore/SERVER.savegame
+# Adjust the file name to your current active save game name (if you did not create a new save game via UI the default is SAVE_1)
+docker cp SAVE_1.savegame <<CONTAINER_ID>>:/backup/restore/SAVE_1
 
 # Start the server
 docker compose up -d
