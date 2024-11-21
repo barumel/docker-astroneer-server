@@ -49,7 +49,12 @@ fi
 
 node /srv/src/initConfig.js
 
-/geproton/proton run /astroneer/Astro/Binaries/Win64/AstroServer-Win64-Shipping.exe &
-node /srv/src/initBackupAndHealtCheck.js
+# https://unix.stackexchange.com/questions/336411/how-can-i-run-two-commands-in-parallel-and-terminate-them-if-one-of-them-termina
+/geproton/proton run /astroneer/Astro/Binaries/Win64/AstroServer-Win64-Shipping.exe & p1=$!
+node /srv/src/initBackupAndHealtCheck.js & p2=$!
+
+wait -n
+[ "$?" -ge 0 ] || kill "$p1" "$p2"
+wait
 
 echo "D'oh"

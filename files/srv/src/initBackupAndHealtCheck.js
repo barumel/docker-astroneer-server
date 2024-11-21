@@ -31,7 +31,7 @@ const HealthCheck = require('./lib/HealtCheck');
       .value();
 
     console.log(clc.blue(`${moment().format()}: Exit process...`));
-    console.log(clc.blue(`${moment().format()}: Be aware that you manually have to restart the container if it is not started with "--restart always"`))
+    console.log(clc.blue(`${moment().format()}: Be aware that you manually have to restart the container if it is not started with "--restart always"`));
 
     process.exit(1);
   }
