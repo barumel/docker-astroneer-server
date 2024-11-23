@@ -1,7 +1,7 @@
 const clc = require('cli-color');
 const fs = require('fs-extra');
 const ini = require('ini');
-const { get, setWith, isNil } = require('lodash');
+const { get, setWith, isNil, pickBy, isEmpty } = require('lodash');
 const axios = require('axios');
 const moment = require('moment');
 
@@ -15,7 +15,7 @@ function AstroServerConfig() {
    *
    * @return  {String}  value  Env var value
    */
-  function getEnvVar(name, defaultReturn) {
+  function getEnvVar(name, defaultReturn = undefined) {
     const value = get(process.env, name);
 
     return isNil(value) || get(value, 'length', 0) === 0
@@ -29,52 +29,40 @@ function AstroServerConfig() {
    * @return  {String}  ip  IP Address
    */
   async function getPublicIp() {
-    const url = 'https://api.ipify.org/';
+    try {
+      const url = 'https://api.ipify.org/';
 
-    const { data } = await axios({
-      url,
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json'
-      }
-    });
+      const { data } = await axios({
+        url,
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
 
-    console.log(clc.blue(`${moment().format()}: Public ip address returned from https://api.ipify.org: ${data}`));
+      console.log(clc.blue(`${moment().format()}: Public ip address returned from https://api.ipify.org: ${data}`));
 
-    return data;
+      return data;
+    } catch (error) {
+      console.log(clc.yellow(`${moment().format()}: Unable to get public ip address from https://api.ipify.org`, error));
+
+      return undefined;
+    }
   }
 
   /**
-   * Check if all necessary config values are set
-   *
-   * @return  {Boolean}
-   */
-  function validate() {
-    const required = ['ASTRO_SERVER_NAME', 'ASTRO_SERVER_OWNER_NAME', 'ASTRO_SERVER_PASSWORD'];
-
-    required.forEach((key) => {
-      const value = getEnvVar(key);
-
-      if (isNil(value)) {
-        throw new Error(`${moment().format()}: Environment variable ${key} is required but not set!`);
-      }
-    });
-  }
-
-  /**
-   * Update config in ini files
+   * Update engine.ini with values from env
    *
    * @return  void
    */
-  async function update() {
-    console.log(clc.green(`${moment().format()}: Going to update config files with current env variables...`));
-
-    validate();
-
+  async function updateEngine() {
     const engine = ini.decode(fs.readFileSync('/astroneer/Astro/Saved/Config/WindowsServer/Engine.ini', 'utf8'));
-    const astro = ini.decode(fs.readFileSync('/astroneer/Astro/Saved/Config/WindowsServer/AstroServerSettings.ini', 'utf8'));
 
-    setWith(engine, 'URL.Port', getEnvVar('ASTRO_SERVER_PORT', '8777'), Object);
+    const values = {
+      ASTRO_SERVER_PORT: getEnvVar('ASTRO_SERVER_PORT', '8777')
+    };
+
+    setWith(engine, 'URL.Port', values.ASTRO_SERVER_PORT, Object);
     setWith(engine, 'SystemSettings', { 'net.AllowEncryption': 'False' }, Object);
     setWith(engine, '/Script/OnlineSubsystemUtils.IpNetDriver', {
       MaxClientRate: 1048576,
@@ -83,21 +71,62 @@ function AstroServerConfig() {
 
     fs.writeFileSync('/astroneer/Astro/Saved/Config/WindowsServer/Engine.ini', ini.encode(engine));
 
+    return values;
+  }
+
+  /**
+   * Update AstroServerSettings with values from env
+   *
+   * @return  void
+   */
+  async function updateAstroServerSettings() {
+    const astro = ini.decode(fs.readFileSync('/astroneer/Astro/Saved/Config/WindowsServer/AstroServerSettings.ini', 'utf8'));
+
     const publicIp = await getPublicIp();
-    setWith(astro, '/Script/Astro.AstroServerSettings.ServerName', getEnvVar('ASTRO_SERVER_NAME', 'Ooops... i forgot to set a server name'), Object);
-    setWith(astro, '/Script/Astro.AstroServerSettings.PublicIP', getEnvVar('ASTRO_SERVER_PUBLIC_IP', publicIp), Object);
-    setWith(astro, '/Script/Astro.AstroServerSettings.OwnerName', getEnvVar('ASTRO_SERVER_OWNER_NAME', 'Hans Wurst'), Object);
-    setWith(astro, '/Script/Astro.AstroServerSettings.ServerPassword', getEnvVar('ASTRO_SERVER_PASSWORD', 'Well... that was clear'), Object);
-    setWith(astro, '/Script/Astro.AstroServerSettings.AutoSaveGameInterval', getEnvVar('ASTRO_SERVER_AUTO_SAVE_INTERVAL', 60), Object);
+    const values = {
+      ASTRO_SERVER_PUBLIC_IP: getEnvVar('ASTRO_SERVER_PUBLIC_IP', publicIp),
+      ASTRO_SERVER_NAME: getEnvVar('ASTRO_SERVER_NAME'),
+      ASTRO_SERVER_OWNER_NAME: getEnvVar('ASTRO_SERVER_OWNER_NAME'),
+      ASTRO_SERVER_PASSWORD: getEnvVar('ASTRO_SERVER_PASSWORD'),
+      ASTRO_SERVER_AUTO_SAVE_INTERVAL: getEnvVar('ASTRO_SERVER_AUTO_SAVE_INTERVAL', 60)
+    };
+
+    const missing = pickBy(values, (value) => isNil(value));
+    if (!isEmpty(missing)) {
+      console.log(clc.red(`${moment().format()}: One or more required env variables are missing!`, Object.values(missing).join(', ')));
+
+      process.exit(1);
+    }
+
+    setWith(astro, '/Script/Astro.AstroServerSettings.PublicIP', values.ASTRO_SERVER_PUBLIC_IP, Object);
+    setWith(astro, '/Script/Astro.AstroServerSettings.ServerName', values.ASTRO_SERVER_NAME, Object);
+    setWith(astro, '/Script/Astro.AstroServerSettings.OwnerName', values.ASTRO_SERVER_OWNER_NAME, Object);
+    setWith(astro, '/Script/Astro.AstroServerSettings.ServerPassword', values.ASTRO_SERVER_PASSWORD, Object);
+    setWith(astro, '/Script/Astro.AstroServerSettings.AutoSaveGameInterval', values.ASTRO_SERVER_AUTO_SAVE_INTERVAL, Object);
     setWith(astro, '/Script/Astro.AstroServerSettings.EnableAutoRestart', 'False', Object);
-    // setWith(astro, '/Script/Astro.AstroServerSettings.ActiveSaveFileDescriptiveName', 'SERVER', Object);
 
     fs.writeFileSync('/astroneer/Astro/Saved/Config/WindowsServer/AstroServerSettings.ini', ini.encode(astro));
 
+    return values;
+  }
+
+  /**
+   * Update config in ini files
+   *
+   * @return  void
+   */
+  async function update() {
+    console.log(clc.blue(`${moment().format()}: Going to update config files with current env variables...`));
+
+    const { ASTRO_SERVER_PORT } = await updateEngine();
+    const { ASTRO_SERVER_PUBLIC_IP } = await updateAstroServerSettings();
+
     console.log(clc.green(`${moment().format()}: Successfully updated config files!`));
-    console.log(clc.green(`${moment().format()}: Server IP: ${getEnvVar('ASTRO_SERVER_PUBLIC_IP', publicIp)}`));
-    console.log(clc.green(`${moment().format()}: Server Port: ${getEnvVar('ASTRO_SERVER_PORT', '8777')}`));
-    console.log(clc.green(`${moment().format()}: Server URL: ${getEnvVar('ASTRO_SERVER_PUBLIC_IP', publicIp)}:${getEnvVar('ASTRO_SERVER_PORT', '8777')}`));
+    console.log(clc.green(`${moment().format()}: -------------------------------------`));
+    console.log(clc.blue(`${moment().format()}: Server IP: ${ASTRO_SERVER_PUBLIC_IP}`));
+    console.log(clc.blue(`${moment().format()}: Server Port: ${ASTRO_SERVER_PORT}`));
+    console.log(clc.blue(`${moment().format()}: Server URI: ${ASTRO_SERVER_PUBLIC_IP}:${ASTRO_SERVER_PORT}`));
+    console.log(clc.green(`${moment().format()}: -------------------------------------`));
   }
 
   return Object.freeze({
