@@ -125,7 +125,7 @@ function AstroServerConfig() {
     console.log(clc.green(`${moment().format()}: -------------------------------------`));
     console.log(clc.blue(`${moment().format()}: Server IP: ${ASTRO_SERVER_PUBLIC_IP}`));
     console.log(clc.blue(`${moment().format()}: Server Port: ${ASTRO_SERVER_PORT}`));
-    console.log(clc.blue(`${moment().format()}: Server URL: ${ASTRO_SERVER_PUBLIC_IP}:${ASTRO_SERVER_PORT}`));
+    console.log(clc.blue(`${moment().format()}: Server URI: ${ASTRO_SERVER_PUBLIC_IP}:${ASTRO_SERVER_PORT}`));
     console.log(clc.green(`${moment().format()}: -------------------------------------`));
   }
 
