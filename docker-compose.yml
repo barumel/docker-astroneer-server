@@ -7,6 +7,7 @@ services:
       context: ./
       dockerfile: Dockerfile
     environment:
+      - "ASTRO_SERVER_PUBLIC_IP=${ASTRO_SERVER_PUBLIC_IP}"
       - "ASTRO_SERVER_PORT=${ASTRO_SERVER_PORT}"
       - "ASTRO_SERVER_NAME=${ASTRO_SERVER_NAME}"
       - "ASTRO_SERVER_PASSWORD=${ASTRO_SERVER_PASSWORD}"
