@@ -39,7 +39,7 @@ function AstroServerConfig() {
       }
     });
 
-    console.log(clc.blue(`${moment().format()}: PUBLIC IP IS ${data}`));
+    console.log(clc.blue(`${moment().format()}: Public ip address returned from https://api.ipify.org: ${data}`));
 
     return data;
   }
@@ -95,6 +95,9 @@ function AstroServerConfig() {
     fs.writeFileSync('/astroneer/Astro/Saved/Config/WindowsServer/AstroServerSettings.ini', ini.encode(astro));
 
     console.log(clc.green(`${moment().format()}: Successfully updated config files!`));
+    console.log(clc.green(`${moment().format()}: Server IP: ${getEnvVar('ASTRO_SERVER_PUBLIC_IP', publicIp)}`));
+    console.log(clc.green(`${moment().format()}: Server Port: ${getEnvVar('ASTRO_SERVER_PORT', '8777')}`));
+    console.log(clc.green(`${moment().format()}: Server URL: ${getEnvVar('ASTRO_SERVER_PUBLIC_IP', publicIp)}:${getEnvVar('ASTRO_SERVER_PORT', '8777')}`));
   }
 
   return Object.freeze({
