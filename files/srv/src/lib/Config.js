@@ -10,9 +10,9 @@ function AstroServerConfig() {
   /**
    * Check if the given env var is set and not empty
    *
-   * @param   {[type]}  name  [name description]
+   * @param   {String}  name  Var name
    *
-   * @return  {[type]}        [return description]
+   * @return  {Boolean}
    */
   function hasEnvVar(name) {
     const value = get(process.env, name);
@@ -36,7 +36,7 @@ function AstroServerConfig() {
   }
 
   /**
-   * Check if ASTRO_SERVER_DOMAIN_NAME is set and try to resolve it
+   * Try to resolve ASTRO_SERVER_DOMAIN_NAME
    *
    * @return  {String} ip IP Address
    */
@@ -87,7 +87,7 @@ function AstroServerConfig() {
   }
 
   /**
-   * Try to resolve the public ip
+   * Get the service ip address from config or try to resolve it
    *
    * @return  {String}  ip  IP Address
    */
