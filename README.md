@@ -139,6 +139,14 @@ docker compose up -d
 
 ### Cannot connect to the server
 
+Check if your server ip / port is correct. Currently only IP v4 adresses are supported. It is not possible to join the server via domain name or IP v6.
+
+Also make sure that you are using your pubic IP address. Connecting via local ip address does not work! You can get the full server uri in the server log.
+
+Example: `123.456.7.89:8777`
+
+
+
 Use the server checker provided by @JoeJoeTV to check if your server shows online [[https://astroservercheck.joejoetv.de/](https://astroservercheck.joejoetv.de/)
 
 If it is online
@@ -149,14 +157,10 @@ If it is online
   from inside your Network connect to the server via its public IP 
   address. Some routers don't support this at all, on some you'll have to 
   enable it first. Check your router manual.
-
-- Check if your server ip / port is correct. Currently only IP v4 adresses are supported. It is not possible to join the server via domain name or IP v6. 
   
-  Also make sure that you are using your pubic IP address. Connecting via local ip address does not work! You can get the full server uri in the server log.
   
-  Example: `123.456.7.89:8777`
 
-    
+
 
 If it is not online or has issues
 
