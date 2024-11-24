@@ -141,8 +141,6 @@ docker compose up -d
 
 Use the server checker provided by @JoeJoeTV to check if your server shows online [[https://astroservercheck.joejoetv.de/](https://astroservercheck.joejoetv.de/)
 
-
-
 If it is online
 
 - Check if other people (not in your LAN) can join the server. If so, this indicates an issue with NAT Loopback.
@@ -154,6 +152,8 @@ If it is online
 
 - Check if your server ip / port is correct. Currently only IP v4 adresses are supported. It is not possible to join the server via domain name or IP v6. 
   
+  Also make sure that you are using your pubic IP address. Connecting via local ip address does not work! You can get the full server uri in the server log.
+  
   Example: `123.456.7.89:8777`
 
     
@@ -164,8 +164,6 @@ If it is not online or has issues
   (default 8777) must point to the machine the container is running on.
 
 - Make sure the port is not blocked by a firewall
-
-
 
 ### Discord
 
