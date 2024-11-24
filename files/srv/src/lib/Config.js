@@ -8,6 +8,19 @@ const dns = require('dns').promises;
 
 function AstroServerConfig() {
   /**
+   * Check if the given env var is set and not empty
+   *
+   * @param   {[type]}  name  [name description]
+   *
+   * @return  {[type]}        [return description]
+   */
+  function hasEnvVar(name) {
+    const value = get(process.env, name);
+
+    return !isNil(value) && get(value, 'length', 0) > 0;
+  }
+
+  /**
    * Get a single var from env.
    * Return the defaultReturn if var is not set or an empty string
    *
@@ -17,41 +30,75 @@ function AstroServerConfig() {
    * @return  {String}  value  Env var value
    */
   function getEnvVar(name, defaultReturn = undefined) {
-    const value = get(process.env, name);
-
-    return isNil(value) || get(value, 'length', 0) === 0
+    return !hasEnvVar(name)
       ? defaultReturn
-      : value;
+      : get(process.env, name);
   }
 
   /**
-   * Get the servers ip address from https://api.ipify.org/
+   * Check if ASTRO_SERVER_DOMAIN_NAME is set and try to resolve it
+   *
+   * @return  {String} ip IP Address
+   */
+  async function resolveDomainName() {
+    const domain = getEnvVar('ASTRO_SERVER_DOMAIN_NAME');
+    console.log(clc.blue(`${moment().format()}: Try to resolve ${domain}`));
+
+    try {
+      const { address } = await dns.lookup(domain, { family: 4 });
+
+      console.log(clc.blue(`${moment().format()}: Public ip address resolved for ${domain}: ${address}`));
+
+      return address;
+    } catch (error) {
+      console.error(clc.yellow(`${moment().format()}: Unable to resolve ${domain}!`, error));
+
+      return undefined;
+    }
+  }
+
+  /**
+   * Try to resolve the servers ip address via https://api.ipify.org/
    *
    * @return  {String}  ip  IP Address
    */
-  async function getPublicIp(input) {
-    let ip = '';
+  async function resolvePublicIpAddress() {
+    console.log(clc.blue(`${moment().format()}: Try to get public ip address from https://api.ipify.org`));
+
     try {
-      if (input) {
-        ip = (await dns.lookup(input, { family: 4 }).catch(() => dns.lookup(input, { family: 6 }))).address;
-      } else {
-        const url = 'https://api.ipify.org/';
-        const response = await axios({
-          url,
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json'
-          }
-        });
-        ip = response.data;
-      }
+      const url = 'https://api.ipify.org/';
+
+      const { data } = await axios({
+        url,
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
+
+      console.log(clc.blue(`${moment().format()}: Public ip address returned from https://api.ipify.org: ${data}`));
+
+      return data;
     } catch (error) {
-      console.error(clc.blue(`${moment().format()}: Unable to get public ip`, error));
+      console.log(clc.yellow(`${moment().format()}: Unable to get public ip address from https://api.ipify.org`, error));
+
       return undefined;
     }
+  }
 
-    console.log(clc.blue(`${moment().format()}: PUBLIC IP IS ${ip}`));
-    return ip;
+  /**
+   * Try to resolve the public ip
+   *
+   * @return  {String}  ip  IP Address
+   */
+  async function getIpAddress() {
+    if (hasEnvVar('ASTRO_SERVER_PUBLIC_IP')) {
+      return getEnvVar('ASTRO_SERVER_PUBLIC_IP');
+    }
+
+    return hasEnvVar('ASTRO_SERVER_DOMAIN_NAME')
+      ? resolveDomainName()
+      : resolvePublicIpAddress();
   }
 
   /**
@@ -86,9 +133,8 @@ function AstroServerConfig() {
   async function updateAstroServerSettings() {
     const astro = ini.decode(fs.readFileSync('/astroneer/Astro/Saved/Config/WindowsServer/AstroServerSettings.ini', 'utf8'));
 
-    const publicIp = getEnvVar('ASTRO_SERVER_PUBLIC_IP') || await getPublicIp(getEnvVar('ASTRO_SERVER_DOMAIN_NAME'));;
     const values = {
-      ASTRO_SERVER_PUBLIC_IP: publicIp,
+      ASTRO_SERVER_PUBLIC_IP: await getIpAddress(),
       ASTRO_SERVER_NAME: getEnvVar('ASTRO_SERVER_NAME'),
       ASTRO_SERVER_OWNER_NAME: getEnvVar('ASTRO_SERVER_OWNER_NAME'),
       ASTRO_SERVER_PASSWORD: getEnvVar('ASTRO_SERVER_PASSWORD'),
@@ -134,6 +180,7 @@ function AstroServerConfig() {
   }
 
   return Object.freeze({
+    hasEnvVar,
     getEnvVar,
     getPublicIp,
     update

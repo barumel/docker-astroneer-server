@@ -43,13 +43,14 @@ There is no general way to do this as it varies depending on the router / firewa
 
 The following configuration values are currently available
 
-| VAR                     | Required | Default Value | Description                                                                                                                                 |
-| ----------------------- | -------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| ASTRO_SERVER_NAME       | Yes      |               | The name or your server.                                                                                                                    |
-| ASTRO_SERVER_PORT       | No       | 8777          | Custom server port                                                                                                                          |
-| ASTRO_SERVER_PUBLIC_IP  | No       |               | The public ip address of your server. If left empty, https://api.ipify.org/ will be used to determine your current ip address (recommended) |
-| ASTRO_SERVER_OWNER_NAME | Yes      |               | Name or the server owner (Steam username)                                                                                                   |
-| ASTRO_SERVER_PASSWORD   | Yes      |               | Server password                                                                                                                             |
+| VAR                      | Required | Default Value | Description                                                                                                                                                                                                                                                                                                                                                                                                              |
+| ------------------------ | -------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| ASTRO_SERVER_NAME        | Yes      |               | The name or your server.                                                                                                                                                                                                                                                                                                                                                                                                 |
+| ASTRO_SERVER_PORT        | No       | 8777          | Custom server port                                                                                                                                                                                                                                                                                                                                                                                                       |
+| ASTRO_SERVER_PUBLIC_IP   | No       |               | The public ip address (v4) of your server. If left empty, https://api.ipify.org/ will be used to determine your current ip address (recommended).                                                                                                                                                                                                                                                                        |
+| ASTRO_SERVER_DOMAIN_NAME | No       |               | Optional domain name to resolve the ip for the server. <br/>Only use this if the IP address returned from https://api.ipify.org/ is not correct and your host has a domain name that can be resolved.<br/>Be aware that you can't connect to the server with this domain name it's just a helper to determine the ip address of your server. You will still have to connect to the server with `<<IP_ADDRESS>>:<<PORT>>` |
+| ASTRO_SERVER_OWNER_NAME  | Yes      |               | Name or the server owner (Steam username)                                                                                                                                                                                                                                                                                                                                                                                |
+| ASTRO_SERVER_PASSWORD    | Yes      |               | Server password                                                                                                                                                                                                                                                                                                                                                                                                          |
 
 ## Starting the server
 
@@ -131,3 +132,41 @@ docker cp SAVE_1.savegame <<CONTAINER_ID>>:/backup/restore/SAVE_1
 # Start the server
 docker compose up -d
 ```
+
+## Troubleshooting
+
+### Cannot connect to the server
+
+Use the server checker provided by @JoeJoeTV to check if your server shows online [[https://astroservercheck.joejoetv.de/](https://astroservercheck.joejoetv.de/)
+
+
+
+If it is online
+
+- Check if other people (not in your LAN) can join the server. If so, this indicates an issue with NAT Loopback.
+  
+  Your router must support NAT Loopback (Hairpinning) which lets clients 
+  from inside your Network connect to the server via its public IP 
+  address. Some routers don't support this at all, on some you'll have to 
+  enable it first. Check your router manual.
+
+- Check if your server ip / port is correct. Currently only IP v4 adresses are supported. It is not possible to join the server via domain name or IP v6. 
+  
+  Example: `123.456.7.89:8777`
+
+    
+
+If it is not online or has issues
+
+- Check your router configuration / port forwarding. The server port 
+  (default 8777) must point to the machine the container is running on.
+
+- Make sure the port is not blocked by a firewall
+
+
+
+### Discord
+
+Join the official Astroneer Discord server: [ASTRONEER](https://discord.com/invite/astroneer). 
+
+Check the pinned messages in the self-hosted-talk channel as many common issues already have been solved there.
