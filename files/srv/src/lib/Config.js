@@ -182,7 +182,9 @@ function AstroServerConfig() {
   return Object.freeze({
     hasEnvVar,
     getEnvVar,
-    getPublicIp,
+    resolveDomainName,
+    resolvePublicIpAddress,
+    getIpAddress,
     update
   });
 }
