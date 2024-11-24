@@ -4,6 +4,7 @@ const ini = require('ini');
 const { get, setWith, isNil, pickBy, isEmpty } = require('lodash');
 const axios = require('axios');
 const moment = require('moment');
+const dns = require('dns').promises;
 
 function AstroServerConfig() {
   /**
@@ -28,26 +29,29 @@ function AstroServerConfig() {
    *
    * @return  {String}  ip  IP Address
    */
-  async function getPublicIp() {
+  async function getPublicIp(input) {
+    let ip = '';
     try {
-      const url = 'https://api.ipify.org/';
-
-      const { data } = await axios({
-        url,
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json'
-        }
-      });
-
-      console.log(clc.blue(`${moment().format()}: Public ip address returned from https://api.ipify.org: ${data}`));
-
-      return data;
+      if (input) {
+        ip = (await dns.lookup(input, { family: 4 }).catch(() => dns.lookup(input, { family: 6 }))).address;
+      } else {
+        const url = 'https://api.ipify.org/';
+        const response = await axios({
+          url,
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+          }
+        });
+        ip = response.data;
+      }
     } catch (error) {
-      console.log(clc.yellow(`${moment().format()}: Unable to get public ip address from https://api.ipify.org`, error));
-
+      console.error(clc.blue(`${moment().format()}: Unable to get public ip`, error));
       return undefined;
     }
+
+    console.log(clc.blue(`${moment().format()}: PUBLIC IP IS ${ip}`));
+    return ip;
   }
 
   /**
@@ -82,9 +86,9 @@ function AstroServerConfig() {
   async function updateAstroServerSettings() {
     const astro = ini.decode(fs.readFileSync('/astroneer/Astro/Saved/Config/WindowsServer/AstroServerSettings.ini', 'utf8'));
 
-    const publicIp = await getPublicIp();
+    const publicIp = getEnvVar('ASTRO_SERVER_PUBLIC_IP') || await getPublicIp(getEnvVar('ASTRO_SERVER_DOMAIN_NAME'));;
     const values = {
-      ASTRO_SERVER_PUBLIC_IP: getEnvVar('ASTRO_SERVER_PUBLIC_IP', publicIp),
+      ASTRO_SERVER_PUBLIC_IP: publicIp,
       ASTRO_SERVER_NAME: getEnvVar('ASTRO_SERVER_NAME'),
       ASTRO_SERVER_OWNER_NAME: getEnvVar('ASTRO_SERVER_OWNER_NAME'),
       ASTRO_SERVER_PASSWORD: getEnvVar('ASTRO_SERVER_PASSWORD'),
