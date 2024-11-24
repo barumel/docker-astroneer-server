@@ -8,13 +8,14 @@ services:
       dockerfile: Dockerfile
     environment:
       - "ASTRO_SERVER_PUBLIC_IP=${ASTRO_SERVER_PUBLIC_IP}"
-      - "ASTRO_SERVER_PORT=${ASTRO_SERVER_PORT}"
+      - "ASTRO_SERVER_DOMAIN_NAME=${ASTRO_SERVER_DOMAIN_NAME}"
+      - "ASTRO_SERVER_PORT=${ASTRO_SERVER_PORT:-8777}"
       - "ASTRO_SERVER_NAME=${ASTRO_SERVER_NAME}"
       - "ASTRO_SERVER_PASSWORD=${ASTRO_SERVER_PASSWORD}"
       - "ASTRO_SERVER_OWNER_NAME=${ASTRO_SERVER_OWNER_NAME}"
     ports:
-      - 8777:8777/tcp
-      - 8777:8777/udp
+      - ${ASTRO_SERVER_PORT:-8777}:${ASTRO_SERVER_PORT:-8777}/tcp
+      - ${ASTRO_SERVER_PORT:-8777}:${ASTRO_SERVER_PORT:-8777}/udp
     restart: always
     volumes:
      - astroneer:/astroneer
