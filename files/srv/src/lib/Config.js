@@ -92,6 +92,7 @@ function AstroServerConfig() {
    * @return  {String}  ip  IP Address
    */
   async function getIpAddress() {
+    // ASTRO_SERVER_PUBLIC_IP must overrule other values
     if (hasEnvVar('ASTRO_SERVER_PUBLIC_IP')) {
       return getEnvVar('ASTRO_SERVER_PUBLIC_IP');
     }
