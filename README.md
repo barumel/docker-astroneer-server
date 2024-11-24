@@ -33,7 +33,7 @@ Or, you can use the provided .bat file to modify the client config file
 clientNetDisableEncryption.bat
 ```
 
-### Configure Router / Firewall
+### Router / Firewall
 
 Make sure you configured your router to forward the configured port (default 8777) to your server machine.
 
