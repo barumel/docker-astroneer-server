@@ -34,6 +34,7 @@ RUN set -ex; \
   winbind \
   curl \
   locales \
+  gnupg \
   tzdata;
 
 # Update locales
