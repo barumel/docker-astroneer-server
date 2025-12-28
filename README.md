@@ -205,7 +205,7 @@ docker compose up -d
 
 ## 
 
-## ## Encryption Support
+## Encryption Support
 
 Astroneer’s dedicated server now fully supports encrypted network traffic when running under modern Proton/Wine versions. **Encryption is enabled by default** in this container to ensure secure communication between clients and the server.
 
