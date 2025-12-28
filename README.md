@@ -292,7 +292,13 @@ Starting with this release, **you must ensure your existing Astroneer data volum
 
 #### What You Need to Do
 
-**1. Backup your save game**
+**1. Stop the container**
+
+```shell
+docker compose stop
+```
+
+**2. Backup your save game**
 
 Make sure you manually backed up your save game before performing these steps (Copy the save game to the host)!
 
@@ -302,7 +308,7 @@ Check the **Restore a backup** section above for detailed instructions
 
 
 
-**2. Remove your existing Astroneer volume**
+**3. Remove your existing Astroneer volume**
 
 ```shell
 docker volume rm docker-astroneer-server_astroneer
@@ -312,6 +318,16 @@ docker volume rm docker-astroneer-server_steamcmd
 This will delete the astroneer server files as well as the steam cmd files.
 
  
+
+**4. Start the container**
+
+```shell
+docker compose up -d
+```
+
+### 
+
+
 
 ### Discord
 
