@@ -1,6 +1,6 @@
 # docker-astroneer-server
 
-## Breaking Change in 1.x: Client Encryption
+## Breaking Change in 3.x: Client Encryption
 
 With the latest Proton releases now supporting the encryption algorithm used by Astroneer’s dedicated server, **encryption is enabled by default again** in this project.
 
@@ -10,11 +10,13 @@ If you previously followed the old instructions to **disable client‑side encry
 
 ### What You Need to Do
 
+#### Re-enable encryption
+
 If you modified your `Engine.ini` as previously instructed, remove the override or set encryption back to `True`.
 
 
 
-### Option 1: Edit the file manually
+##### Option 1: Edit the file manually
 
 Open:
 
@@ -34,11 +36,35 @@ Or change it to:
 net.AllowEncryption=True
 ```
 
-### Option 2: Use the provided .bat file
+##### Option 2: Use the provided .bat file
 
 ```shell
 clientNetEnableEncryption.bat
 ```
+
+
+
+#### Linux Clients
+
+Make sure you use the latest proton version or try the latest proton-ge-custom build: [Releases · GloriousEggroll/proton-ge-custom · GitHub](https://github.com/GloriousEggroll/proton-ge-custom/releases)
+
+
+
+You can still disable encryption via `ASTRO_SERVER_DISABLE_ENCRYPTION` env variable but be aware that encryption must be disabled on all clients in this case.
+
+
+
+#### Unable to connect after update
+
+First check the server status [https://astroservercheck.joejoetv.de/](https://astroservercheck.joejoetv.de/)
+
+
+
+Check if the latest version of the server is installed. If not try to remove the existing volumes and restart the container. 
+
+See the **Troubleshooting** section at the end of this Readme
+
+
 
 ## System requirements
 
@@ -48,6 +74,8 @@ clientNetEnableEncryption.bat
 | **RAM**     | 4 GB total system RAM (≈2–3 GB free for the container) |
 | **Storage** | 10–15 GB free                                          |
 
+## 
+
 ## Router / Firewall
 
 Make sure you configured your router to forward the configured port (default 8777) to your server machine.
@@ -55,6 +83,8 @@ Make sure you configured your router to forward the configured port (default 877
 Also open this port on your firewall if you have one.
 
 There is no general way to do this as it varies depending on the router / firewall used.
+
+## 
 
 ## Configuration
 
@@ -69,6 +99,8 @@ The following configuration values are currently available
 | ASTRO_SERVER_OWNER_NAME         | Yes      |               | Name or the server owner (Steam username)                                                                                                                                                                                                                                                                                                                                                                                 |
 | ASTRO_SERVER_PASSWORD           | Yes      |               | Server password                                                                                                                                                                                                                                                                                                                                                                                                           |
 | ASTRO_SERVER_DISABLE_ENCRYPTION | No       | false         | Disable server encryption (Legacy mode)                                                                                                                                                                                                                                                                                                                                                                                   |
+
+## 
 
 ## Starting the server
 
@@ -92,6 +124,8 @@ docker compose up -d
 ```
 
 This may take a few minutes if the server runs the first time as it installs the server software via steamcmd and launches the server to make sure all necessary .ini files were created.
+
+## 
 
 ## Using an existing save game
 
@@ -117,6 +151,8 @@ docker compose up -d
 ```
 
 The server will check the /tmp dir on the first run and copy the save game to the SaveGames folder.
+
+## 
 
 ## Backups
 
@@ -150,6 +186,8 @@ docker cp SAVE_1.savegame <<CONTAINER_ID>>:/backup/restore/SAVE_1
 # Start the server
 docker compose up -d
 ```
+
+### 
 
 ### Encryption Support
 
@@ -222,8 +260,69 @@ If it is not online or has issues
 
 - Make sure the port is not blocked by a firewall
 
+
+
+**Update to 3.x**
+
+If you updated from a previous version to 3.x or later, stop the container and remove the docker volumes.
+
+
+
+Make sure you manually backed up your save game before performing these steps (Copy the save game to the host)!
+
+```shell
+docker volume rm docker-astroneer-server_astroneer
+docker volume rm docker-astroneer-server_steamcmd
+```
+
+This will delete the astroneer server files as well as the steam cmd files. 
+
+
+
+Starting the container again will then perform an full install of steamcmd and astro server on start (may take a while).
+
+
+
+### SteamCMD Does Not Update the Server When Using Existing Volumes
+
+In previous versions, the Astroneer server files stored in your Docker volume could cause **SteamCMD to skip updates**, even though the container runs `app_update` on every startup. This happened because SteamCMD relies on metadata inside the game directory (such as the `appmanifest_728470.acf` file) to determine whether an update is needed. When this metadata becomes stale or mismatched, SteamCMD incorrectly reports that the server is already up to date.
+
+Starting with this release, **you must ensure your existing Astroneer data volume is refreshed** so SteamCMD can correctly detect and install updates.
+
+#### What You Need to Do
+
+**1. Backup your save game**
+
+Make sure you manually backed up your save game before performing these steps (Copy the save game to the host)!
+
+
+
+Check the **Restore a backup** section above for detailed instructions
+
+
+
+**2. Remove your existing Astroneer volume (recommended)**
+
+```shell
+docker volume rm docker-astroneer-server_astroneer
+docker volume rm docker-astroneer-server_steamcmd
+```
+
+This will delete the astroneer server files as well as the steam cmd files.
+
+ 
+
 ### Discord
 
-Join the official Astroneer Discord server: [ASTRONEER](https://discord.com/invite/astroneer). 
+You can join the official Astroneer Discord server: [ASTRONEER](https://discord.com/invite/astroneer).
 
 Check the pinned messages in the self-hosted-talk channel as many common issues already have been solved there.
+
+
+
+**Support Note**
+
+Please **do not ask questions about this server image in the official Astroneer Discord**.
+I’m not active there, and the community members and moderators are not familiar with this image, so they won’t be able to help with issues related to it.
+
+If you run into problems or have questions, please use the issue tracker or discussion section of this repository instead
