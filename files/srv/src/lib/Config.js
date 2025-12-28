@@ -120,9 +120,11 @@ function AstroServerConfig() {
       MaxInternetClientRate: 1048576
     }, Object);
 
-    if (getEnvVar('ASTRO_SERVER_DISABLE_ENCRYPTION') === 'true') {
-      setWith(engine, 'SystemSettings', { 'net.AllowEncryption': 'False' }, Object);
-    }
+    const allowEncryption = getEnvVar('ASTRO_SERVER_DISABLE_ENCRYPTION') === 'true'
+      ? 'False'
+      : 'True';
+
+    setWith(engine, 'SystemSettings', { 'net.AllowEncryption': allowEncryption }, Object);
 
     fs.writeFileSync('/astroneer/Astro/Saved/Config/WindowsServer/Engine.ini', ini.encode(engine));
 
