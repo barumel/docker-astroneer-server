@@ -66,6 +66,10 @@ See the **Troubleshooting** section at the end of this Readme
 
 
 
+## 
+
+
+
 ## System requirements
 
 | Component   | Minimum Requirement                                    |
@@ -76,6 +80,8 @@ See the **Troubleshooting** section at the end of this Readme
 
 ## 
 
+## 
+
 ## Router / Firewall
 
 Make sure you configured your router to forward the configured port (default 8777) to your server machine.
@@ -83,6 +89,8 @@ Make sure you configured your router to forward the configured port (default 877
 Also open this port on your firewall if you have one.
 
 There is no general way to do this as it varies depending on the router / firewall used.
+
+## 
 
 ## 
 
@@ -99,6 +107,8 @@ The following configuration values are currently available
 | ASTRO_SERVER_OWNER_NAME         | Yes      |               | Name or the server owner (Steam username)                                                                                                                                                                                                                                                                                                                                                                                 |
 | ASTRO_SERVER_PASSWORD           | Yes      |               | Server password                                                                                                                                                                                                                                                                                                                                                                                                           |
 | ASTRO_SERVER_DISABLE_ENCRYPTION | No       | false         | Disable server encryption (Legacy mode)                                                                                                                                                                                                                                                                                                                                                                                   |
+
+## 
 
 ## 
 
@@ -127,6 +137,8 @@ This may take a few minutes if the server runs the first time as it installs the
 
 ## 
 
+## 
+
 ## Using an existing save game
 
 You can import an existing save game to the server via the following commands.
@@ -151,6 +163,8 @@ docker compose up -d
 ```
 
 The server will check the /tmp dir on the first run and copy the save game to the SaveGames folder.
+
+## 
 
 ## 
 
@@ -189,7 +203,9 @@ docker compose up -d
 
 ### 
 
-### Encryption Support
+## 
+
+## ## Encryption Support
 
 Astroneer’s dedicated server now fully supports encrypted network traffic when running under modern Proton/Wine versions. **Encryption is enabled by default** in this container to ensure secure communication between clients and the server.
 
@@ -231,6 +247,10 @@ clientNetDisableEncryption.bat
 ```
 
 Without this matching setting, clients will fail to connect.
+
+## 
+
+
 
 ## Troubleshooting
 
