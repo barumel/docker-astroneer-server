@@ -1,7 +1,7 @@
-FROM amd64/debian:bookworm
+FROM amd64/debian:trixie
 
 ENV DEBIAN_FRONTEND="noninteractive"
-ENV GE_PROTON_VERSION="9-18"
+ENV GE_PROTON_VERSION="10-27"
 ENV STEAMCMD_PATH="/steamcmd"
 ENV STEAM_COMPAT_CLIENT_INSTALL_PATH="/steamcmd"
 ENV STEAM_COMPAT_DATA_PATH="/steamcmd/steamapps/compatdata/728470"

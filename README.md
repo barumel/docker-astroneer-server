@@ -1,39 +1,54 @@
 # docker-astroneer-server
 
-## Prerequisites
+## Breaking Change in 1.x: Client Encryption
 
-### Client
+With the latest Proton releases now supporting the encryption algorithm used by Astroneer’s dedicated server, **encryption is enabled by default again** in this project.
 
-#### Disable Encryption
+If you previously followed the old instructions to **disable client‑side encryption**, you must revert those changes. Clients with `net.AllowEncryption=False` will no longer be able to connect to servers running current versions of this container.
 
-The current astroneer server implementation uses an encryption algorithm that is not supported by wine's implementation of bcrypt.dll.
-Due to this issue, we have to disable encryption on the server side to make things work.
 
-To be able to connect to the server you will have to disable encryption on the client side as well.
 
-Locate the Engine.ini file on your file system (usually located under `<<User Home>>/AppData/Local/Astro/Saved/Config/WindowsNoEditor)` and add the following line to the bottom of the file:
+### What You Need to Do
 
-> win + r %LocalAppData%\Astro\Saved\Config\WindowsNoEditor
+If you modified your `Engine.ini` as previously instructed, remove the override or set encryption back to `True`.
 
+
+
+### Option 1: Edit the file manually
+
+Open:
+
+```shell
+%LocalAppData%\Astro\Saved\Config\WindowsNoEditor\Engine.ini
 ```
-[SystemSettings]
+
+Remove the line:
+
+```shell
 net.AllowEncryption=False
 ```
 
-You can do this the terminal directly:
+Or change it to:
 
-```bash
-echo [SystemSettings] >> "%LocalAppData%\Astro\Saved\Config\WindowsNoEditor\Engine.ini"
-echo net.AllowEncryption=False >> "%LocalAppData%\Astro\Saved\Config\WindowsNoEditor\Engine.ini"
+```shell
+net.AllowEncryption=True
 ```
 
-Or, you can use the provided .bat file to modify the client config file
+### Option 2: Use the provided .bat file
 
-```bash
-clientNetDisableEncryption.bat
+```shell
+clientNetEnableEncryption.bat
 ```
 
-### Router / Firewall
+## System requirements
+
+| Component   | Minimum Requirement                                    |
+| ----------- | ------------------------------------------------------ |
+| **CPU**     | 2 cores                                                |
+| **RAM**     | 4 GB total system RAM (≈2–3 GB free for the container) |
+| **Storage** | 10–15 GB free                                          |
+
+## Router / Firewall
 
 Make sure you configured your router to forward the configured port (default 8777) to your server machine.
 
@@ -45,14 +60,15 @@ There is no general way to do this as it varies depending on the router / firewa
 
 The following configuration values are currently available
 
-| VAR                      | Required | Default Value | Description                                                                                                                                                                                                                                                                                                                                                                                                               |
-| ------------------------ | -------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ASTRO_SERVER_NAME        | Yes      |               | The name or your server.                                                                                                                                                                                                                                                                                                                                                                                                  |
-| ASTRO_SERVER_PORT        | No       | 8777          | Custom server port                                                                                                                                                                                                                                                                                                                                                                                                        |
-| ASTRO_SERVER_PUBLIC_IP   | No       |               | The public ip address (v4) of your server. If left empty, https://api.ipify.org/ will be used to determine your current ip address (recommended).                                                                                                                                                                                                                                                                         |
-| ASTRO_SERVER_DOMAIN_NAME | No       |               | Optional domain name to resolve the ip for the server. <br/>Only use this if the IP address returned from https://api.ipify.org/ is not correct and your host has a domain name that can be resolved.<br/>Be aware that you can't connect to the server with this domain name, it's just a helper to determine the ip address of your server. You will still have to connect to the server with `<<IP_ADDRESS>>:<<PORT>>` |
-| ASTRO_SERVER_OWNER_NAME  | Yes      |               | Name or the server owner (Steam username)                                                                                                                                                                                                                                                                                                                                                                                 |
-| ASTRO_SERVER_PASSWORD    | Yes      |               | Server password                                                                                                                                                                                                                                                                                                                                                                                                           |
+| VAR                             | Required | Default Value | Description                                                                                                                                                                                                                                                                                                                                                                                                               |
+| ------------------------------- | -------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ASTRO_SERVER_NAME               | Yes      |               | The name or your server.                                                                                                                                                                                                                                                                                                                                                                                                  |
+| ASTRO_SERVER_PORT               | No       | 8777          | Custom server port                                                                                                                                                                                                                                                                                                                                                                                                        |
+| ASTRO_SERVER_PUBLIC_IP          | No       |               | The public ip address (v4) of your server. If left empty, https://api.ipify.org/ will be used to determine your current ip address (recommended).                                                                                                                                                                                                                                                                         |
+| ASTRO_SERVER_DOMAIN_NAME        | No       |               | Optional domain name to resolve the ip for the server. <br/>Only use this if the IP address returned from https://api.ipify.org/ is not correct and your host has a domain name that can be resolved.<br/>Be aware that you can't connect to the server with this domain name, it's just a helper to determine the ip address of your server. You will still have to connect to the server with `<<IP_ADDRESS>>:<<PORT>>` |
+| ASTRO_SERVER_OWNER_NAME         | Yes      |               | Name or the server owner (Steam username)                                                                                                                                                                                                                                                                                                                                                                                 |
+| ASTRO_SERVER_PASSWORD           | Yes      |               | Server password                                                                                                                                                                                                                                                                                                                                                                                                           |
+| ASTRO_SERVER_DISABLE_ENCRYPTION | No       | false         | Disable server encryption (Legacy mode)                                                                                                                                                                                                                                                                                                                                                                                   |
 
 ## Starting the server
 
@@ -135,6 +151,49 @@ docker cp SAVE_1.savegame <<CONTAINER_ID>>:/backup/restore/SAVE_1
 docker compose up -d
 ```
 
+### Encryption Support
+
+Astroneer’s dedicated server now fully supports encrypted network traffic when running under modern Proton/Wine versions. **Encryption is enabled by default** in this container to ensure secure communication between clients and the server.
+
+Most users should keep encryption enabled, as it improves compatibility with current Astroneer clients and aligns with the game’s intended network behavior.
+
+### Disable Encryption (Optional)
+
+For advanced or troubleshooting scenarios, you can explicitly disable server‑side encryption by setting the environment variable:
+
+```shell
+ASTRO_SERVER_DISABLE_ENCRYPTION=true
+```
+
+When this flag is set:
+
+- The server starts with encryption turned **off**
+
+- Clients must also disable encryption in their `Engine.ini` to connect
+
+- This mode is intended only for legacy setups, debugging, or environments where Proton/Wine encryption support is unavailable
+
+### Client‑side change required
+
+If you disable encryption on the server, clients must add the following to:
+
+```shell
+%LocalAppData%\Astro\Saved\Config\WindowsNoEditor\Engine.ini
+```
+
+```ini
+[SystemSettings]
+net.AllowEncryption=False
+```
+
+OR run the disable encryption bat
+
+```shell
+clientNetDisableEncryption.bat
+```
+
+Without this matching setting, clients will fail to connect.
+
 ## Troubleshooting
 
 ### Cannot connect to the server
@@ -144,8 +203,6 @@ Check if your server ip / port is correct. Currently only IP v4 adresses are sup
 Also make sure that you are using your pubic IP address. Connecting via local ip address does not work! You can get the full server uri in the server log.
 
 Example: `123.456.7.89:8777`
-
-
 
 Use the server checker provided by @JoeJoeTV to check if your server shows online [[https://astroservercheck.joejoetv.de/](https://astroservercheck.joejoetv.de/)
 
@@ -157,10 +214,6 @@ If it is online
   from inside your Network connect to the server via its public IP 
   address. Some routers don't support this at all, on some you'll have to 
   enable it first. Check your router manual.
-  
-  
-
-
 
 If it is not online or has issues
 
