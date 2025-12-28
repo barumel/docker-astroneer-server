@@ -282,25 +282,6 @@ If it is not online or has issues
 
 
 
-**Update to 3.x**
-
-If you updated from a previous version to 3.x or later, stop the container and remove the docker volumes.
-
-
-
-Make sure you manually backed up your save game before performing these steps (Copy the save game to the host)!
-
-```shell
-docker volume rm docker-astroneer-server_astroneer
-docker volume rm docker-astroneer-server_steamcmd
-```
-
-This will delete the astroneer server files as well as the steam cmd files. 
-
-
-
-Starting the container again will then perform an full install of steamcmd and astro server on start (may take a while).
-
 
 
 ### SteamCMD Does Not Update the Server When Using Existing Volumes
@@ -321,7 +302,7 @@ Check the **Restore a backup** section above for detailed instructions
 
 
 
-**2. Remove your existing Astroneer volume (recommended)**
+**2. Remove your existing Astroneer volume**
 
 ```shell
 docker volume rm docker-astroneer-server_astroneer
