@@ -25,7 +25,6 @@ RUN set -ex; \
   apt-get install -y \
   apt-transport-https \
   ca-certificates \
-  software-properties-common \
   wget \
   vim \
   xvfb \
